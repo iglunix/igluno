@@ -24,22 +24,22 @@ static char rcsid[] = "$Id: composer.c 1006 2008-03-21 21:31:58Z hubert@u.washin
  *
  *  Notes: These routines aren't incorporated yet, because the composer as
  *         a whole still needs development.  These are ideas that should
- *         be implemented in later releases of PINE.  See the notes in 
- *         pico.c concerning what needs to be done ....
+ *         be implemented in later releases of PINE.  See the notes in
+ *         igluno.c concerning what needs to be done ....
  *
  *  - untabled 01/30/90
  *
- *  Notes: Installed header line editing, with wrapping and unwrapping, 
+ *  Notes: Installed header line editing, with wrapping and unwrapping,
  *         context sensitive help, and other mail header editing features.
  *
  *  - finalish code cleanup 07/15/91
- * 
+ *
  *  Notes: Killed/yanked header lines use emacs kill buffer.
  *         Arbitrarily large headers are handled gracefully.
  *         All formatting handled by FormatLines.
  *
  *  - Work done to optimize display painting 06/26/92
- *         Not as clean as it should be, needs more thought 
+ *         Not as clean as it should be, needs more thought
  *
  */
 #include "headers.h"
@@ -82,7 +82,7 @@ void             mark_sticky(struct headerentry *);
 
 
 /*
- * definition header field array, structures defined in pico.h
+ * definition header field array, structures defined in igluno.h
  */
 struct headerentry *headents;
 
@@ -167,17 +167,17 @@ static UCS ckm[12][2] = {
 
 
 /*
- * InitMailHeader - initialize header array, and set beginning editor row 
- *                  range.  The header entry structure should look just like 
- *                  what is written on the screen, the vector 
- *                  (entry, line, offset) will describe the current cursor 
+ * InitMailHeader - initialize header array, and set beginning editor row
+ *                  range.  The header entry structure should look just like
+ *                  what is written on the screen, the vector
+ *                  (entry, line, offset) will describe the current cursor
  *                  position in the header.
  *
  *	   Returns: TRUE if special header handling was requested,
  *		    FALSE under standard default behavior.
  */
 int
-InitMailHeader(PICO *mp)
+InitMailHeader(IGLUNO *mp)
 {
     char	       *addrbuf;
     struct headerentry *he;
@@ -209,7 +209,7 @@ InitMailHeader(PICO *mp)
 		int    l1, ofp, ofp1, ofp2;  /* OverFlowProtection */
 		size_t addrbuflen = 4 * NLINE; /* malloc()ed size of addrbuf */
                 PATMT *ap = mp->attachments;
- 
+
 		ofp = NLINE - 35;
 
                 addrbuf = (char *)malloc(addrbuflen);
@@ -313,7 +313,7 @@ InitMailHeader(PICO *mp)
 
 
 /*
- * InitEntryText - Add the given header text into the header entry 
+ * InitEntryText - Add the given header text into the header entry
  *		   line structure.
  */
 int
@@ -349,7 +349,7 @@ InitEntryText(char *utf8text, struct headerentry *e)
  *
  *	notes:
  *		works OK, but needs thorough testing
- *		  
+ *
  */
 int
 ResizeHeader(void)
@@ -462,12 +462,12 @@ HeaderFocus(int h, int offset)
 
 
 /*
- * HeaderEditor() - edit the mail header field by field, trapping 
+ * HeaderEditor() - edit the mail header field by field, trapping
  *                  important key sequences, hand the hard work off
- *                  to LineEdit().  
+ *                  to LineEdit().
  *	returns:
  *              -3    if we drop out bottom *and* want to process mouse event
- *		-1    if we drop out the bottom 
+ *		-1    if we drop out the bottom
  *		FALSE if editing is cancelled
  *		TRUE  if editing is finished
  */
@@ -495,18 +495,18 @@ HeaderEditor(int f, int n)
     mswin_setscrollrange (0, 0);
 #endif /* _WINDOWS */
 
-    /* 
+    /*
      * Decide where to begin editing.  if f == TRUE begin editing
      * at the bottom.  this case results from the cursor backing
      * into the editor from the bottom.  otherwise, the user explicitly
      * requested editing the header, and we begin at the top.
-     * 
+     *
      * further, if f == 1, we moved into the header by hitting the up arrow
      * in the message text, else if f == 2, we moved into the header by
-     * moving past the left edge of the top line in the message.  so, make 
+     * moving past the left edge of the top line in the message.  so, make
      * the end of the last line of the last entry the current cursor position
      * lastly, if f == 3, we moved into the header by hitting backpage() on
-     * the top line of the message, so scroll a page back.  
+     * the top line of the message, so scroll a page back.
      */
     if(f){
 	if(f == 2){				/* 2 leaves cursor at end  */
@@ -583,7 +583,7 @@ HeaderEditor(int f, int n)
 	    case (CTRL|'L'):
 	      km_popped++;
 	      break;
-	    
+
 	    default:
 	      movecursor(term.t_nrow-2, 0);
 	      peeol();
@@ -1100,7 +1100,7 @@ nomore_to_complete:
 		 */
 		while(ods.cur_l != new_cur_l && header_downline(0, 0))
 		  ;
-		
+
 		/*
 		 * Count back up, if we're at the bottom, to find the new
 		 * top line.
@@ -1121,14 +1121,14 @@ nomore_to_complete:
 			prev_line = prev_hline(&cur_e, line);
 			if(!prev_line)
 			  break;
-			
+
 			line = prev_line;
 		    }
 
 		    ods.top_l = line;
 		    ods.top_e = cur_e;
 		    ods.p_line = i;
-		      
+
 		}
 		else{
 		    ods.top_l = ods.cur_l;
@@ -1162,7 +1162,7 @@ nomore_to_complete:
 			prev_line = prev_hline(&cur_e, line);
 			if(!prev_line)
 			  break;
-			
+
 			line = prev_line;
 		    }
 
@@ -1205,7 +1205,7 @@ nomore_to_complete:
 		if (!mp.doubleclick) {
 		    if (mp.row < ods.p_line) {
 			for (i = ods.p_line - mp.row;
-			     i > 0 && header_upline(0); 
+			     i > 0 && header_upline(0);
 			     --i)
 			  ;
 		    }
@@ -1231,7 +1231,7 @@ nomore_to_complete:
 
 	      case M_BUTTON_RIGHT :
 #ifdef	_WINDOWS
-		pico_popup();
+		igluno_popup();
 #endif
 	      case M_BUTTON_MIDDLE :
 	      default :	/* NOOP */
@@ -1314,15 +1314,15 @@ nomore_to_complete:
                 /*---- General selector for non-attachments -----*/
 
 		/*
-		 * Since the selector may make a new call back to pico()
-		 * we need to save and restore the pico state here.
+		 * Since the selector may make a new call back to igluno()
+		 * we need to save and restore the igluno state here.
 		 */
-		if((saved_state = save_pico_state()) != NULL){
+		if((saved_state = save_igluno_state()) != NULL){
 		    bufp = (*(headents[ods.cur_e].selector))(&errmss);
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		    ttresize();			/* fixup screen bufs */
-		    picosigs();			/* restore altered signals */
+		    iglunosigs();			/* restore altered signals */
 		}
 		else{
 		    char *s = "Not enough memory";
@@ -1340,7 +1340,7 @@ nomore_to_complete:
 		    err = NULL;
                     if(headents[ods.cur_e].break_on_comma) {
                         /*--- Must be an address ---*/
-			
+
 			/*
 			 * If current line is empty and there are more
 			 * lines that follow, delete the empty lines
@@ -1358,7 +1358,7 @@ nomore_to_complete:
                         if(ods.cur_l->text[0] != '\0'){
 			    struct hdr_line *h, *start_of_addr;
 			    int              q = 0;
-			    
+
 			    /* cur is not first line */
 			    if(ods.cur_l != headents[ods.cur_e].hd_text){
 				/*
@@ -1392,7 +1392,7 @@ nomore_to_complete:
 			}
 
                         if(FormatLines(ods.cur_l, bufp,
-				      (term.t_ncol-headents[ods.cur_e].prwid), 
+				      (term.t_ncol-headents[ods.cur_e].prwid),
                                       headents[ods.cur_e].break_on_comma, 0) == -1){
                             emlwrite("Problem adding address to header !",
                                      NULL);
@@ -1488,10 +1488,10 @@ nomore_to_complete:
 		VARS_TO_SAVE       *saved_state;
 
 		/*
-		 * Since the fileedit will make a new call back to pico()
-		 * we need to save and restore the pico state here.
+		 * Since the fileedit will make a new call back to igluno()
+		 * we need to save and restore the igluno state here.
 		 */
-		if((saved_state = save_pico_state()) != NULL){
+		if((saved_state = save_igluno_state()) != NULL){
 		    UCS *u;
 
 		    e = &headents[ods.cur_e];
@@ -1504,7 +1504,7 @@ nomore_to_complete:
 			u[0] = '\0';
 			for(line = e->hd_text; line != NULL; line = line->next)
 			  ucs4_strncat(u, line->text, sz+1-ucs4_strlen(u)-1);
-		    
+
 			filename = ucs4_to_utf8_cpystr(u);
 			free(u);
 		    }
@@ -1514,10 +1514,10 @@ nomore_to_complete:
 		    if(filename)
 		      free(filename);
 
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		    ttresize();			/* fixup screen bufs */
-		    picosigs();			/* restore altered signals */
+		    iglunosigs();			/* restore altered signals */
 		}
 		else{
 		    char *s = "Not enough memory";
@@ -1564,7 +1564,7 @@ bleep:
 	PaintHeader(COMPOSER_TOP_LINE, FALSE);
 	PaintBody(1);
     }
-    
+
     return(retval);
 }
 
@@ -1708,7 +1708,7 @@ header_upline(int gripe)
 
 	return(0);
     }
-    
+
     /*
      * Because of blank header lines the cursor may need to move up
      * more than one line. Figure out how far.
@@ -1781,7 +1781,7 @@ header_upline(int gripe)
 
 
 /*
- * 
+ *
  */
 int
 AppendAttachment(char *fn, char *sz, char *cmt)
@@ -1822,14 +1822,14 @@ AppendAttachment(char *fn, char *sz, char *cmt)
 	}
     }
 
-    
+
     spaces = (*fn == '\"') ? 0 : (strpbrk(fn, "(), \t") != NULL);
     snprintf(b, sizeof(b), "%s%s%s (%s) \"%.*s\"",
 	    spaces ? "\"" : "", fn, spaces ? "\"" : "",
 	    sz ? sz : "", 80, cmt ? cmt : "");
     u = utf8_to_ucs4_cpystr(b);
     if(u){
-	ucs4_strncpy(lp->text, u, HLSZ); 
+	ucs4_strncpy(lp->text, u, HLSZ);
 	lp->text[HLSZ-1] = '\0';
 	fs_give((void **) &u);
     }
@@ -1862,12 +1862,12 @@ AppendAttachment(char *fn, char *sz, char *cmt)
  * LineEdit - Always use insert mode and handle line wrapping
  *
  *	returns:
- *		Any characters typed in that aren't printable 
+ *		Any characters typed in that aren't printable
  *		(i.e. commands)
  *
- *	notes: 
- *		Assume we are guaranteed that there is sufficiently 
- *		more buffer space in a line than screen width (just one 
+ *	notes:
+ *		Assume we are guaranteed that there is sufficiently
+ *		more buffer space in a line than screen width (just one
  *		less thing to worry about).  If you want to change this,
  *		then pputc will have to be taught to check the line buffer
  *		length, and HALLOC() will probably have to become a func.
@@ -1917,11 +1917,11 @@ LineEdit(int allowedit, UCS *lastch)
 #endif
 #ifdef	_WINDOWS
 	mswin_setdndcallback (composer_file_drop);
-	mswin_mousetrackcallback(pico_cursor);
+	mswin_mousetrackcallback(igluno_cursor);
 #endif
 
 	ch = GetKey();
-	
+
 	if (term.t_nrow < 6 && ch != NODATA){
 	    (*term.t_beep)();
 	    emlwrite(_("Please make the screen larger."), NULL);
@@ -1949,7 +1949,7 @@ LineEdit(int allowedit, UCS *lastch)
 	  case NODATA :			/* new mail ? */
 	    if((*Pmaster->newmail)(ch == NODATA ? 0 : 2, 1) >= 0){
 		int rv;
-		
+
 		if(km_popped){
 		    term.t_mrow = 2;
 		    curwp->w_ntrows -= 2;
@@ -1959,7 +1959,7 @@ LineEdit(int allowedit, UCS *lastch)
 		mlerase();
 		rv = (*Pmaster->showmsg)(ch);
 		ttresize();
-		picosigs();
+		iglunosigs();
 		if(rv)		/* Did showmsg corrupt the display? */
 		  PaintBody(0);	/* Yes, repaint */
 
@@ -2003,7 +2003,7 @@ LineEdit(int allowedit, UCS *lastch)
 		}
 
 		if(headents[ods.cur_e].single_space){
-		    if(ch == ' ' 
+		    if(ch == ' '
 		       && (strng[ods.p_ind]==' ' || strng[ods.p_ind-1]==' '))
 		      continue;
 		}
@@ -2037,7 +2037,7 @@ LineEdit(int allowedit, UCS *lastch)
 		    }
 		}
 		else{
-                    if((status = FormatLines(ods.cur_l, "", LINEWID(), 
+                    if((status = FormatLines(ods.cur_l, "", LINEWID(),
     			        headents[ods.cur_e].break_on_comma,0)) == -1){
                         (*term.t_beep)();
                         continue;
@@ -2063,10 +2063,10 @@ LineEdit(int allowedit, UCS *lastch)
                     continue;
 		}
             }
-            else{  
+            else{
                 rdonly();
                 continue;
-            } 
+            }
         }
         else {					/* interpret ch as a command */
             switch (ch = normalize_cmd(ch, ckm, 2)) {
@@ -2118,8 +2118,8 @@ LineEdit(int allowedit, UCS *lastch)
 		  ods.p_ind = 0;
 
 		if(KillHeaderLine(lp, (last_key == (CTRL|'K')))){
-		    if(TERM_OPTIMIZE && 
-		       !(ods.cur_l->prev==NULL && ods.cur_l->next==NULL)) 
+		    if(TERM_OPTIMIZE &&
+		       !(ods.cur_l->prev==NULL && ods.cur_l->next==NULL))
 		      scrollup(wheadp, ods.p_line, 1);
 
 		    if(ods.cur_l->next == NULL)
@@ -2127,7 +2127,7 @@ LineEdit(int allowedit, UCS *lastch)
 			  if(ods.p_ind > 0)
 			    ods.p_ind = ucs4_strlen(ods.cur_l->text);
 		      }
-		    
+
 		    i = (ods.p_line == COMPOSER_TOP_LINE);
 		    UpdateHeader(0);
 		    PaintHeader(COMPOSER_TOP_LINE, TRUE);
@@ -2254,7 +2254,7 @@ LineEdit(int allowedit, UCS *lastch)
 		      skipmove++;		/* must'a been optimal */
 		}
 		else{				/* may have work to do */
-		    if(ods.cur_l->prev == NULL){  
+		    if(ods.cur_l->prev == NULL){
 			(*term.t_beep)();	/* no erase into next field */
 			continue;
 		    }
@@ -2270,11 +2270,11 @@ LineEdit(int allowedit, UCS *lastch)
 			headents[ods.cur_e].sticky = 0;
 			ods.p_ind = 0;
 		    }
-		    
+
 		    tbufp = &strng[ods.p_ind];
 		}
 
-		if((status = FormatLines(ods.cur_l, "", LINEWID(), 
+		if((status = FormatLines(ods.cur_l, "", LINEWID(),
 				   headents[ods.cur_e].break_on_comma,0))==-1){
 		    (*term.t_beep)();
 		    continue;
@@ -2423,7 +2423,7 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 		}
 		else
 		  retval = TRUE;
-	    
+
 		if(retval){
 		    ucs4_strncpy(buf, breakp, len+10);	/* save broken line */
 		    buf[len+10-1] = '\0';
@@ -2470,7 +2470,7 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 		    if(breakp == istrp)	/* no good break point */
 		      breakp =  ucs4_particular_width(istrp, maxwid-1);
 		}
-		
+
 		for(tp=ostr,bp=istrp; bp < breakp; tp++, bp++)
 		  *tp = *bp;
 
@@ -2524,7 +2524,7 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 		if(breakp == istrp)	/* no good break point */
 		  breakp =  ucs4_particular_width(istrp, maxwid-1);
 	    }
-	    
+
 	    ucs4_strncpy(buf, breakp, len+10);	/* save broken line */
 	    buf[len+10-1] = '\0';
 	    ucs4_strncat(buf, ostr, len+10-ucs4_strlen(buf)-1);	/* add line that was there */
@@ -2548,7 +2548,7 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 		if(breakp == istr)	/* no good break point */
 		  breakp =  ucs4_particular_width(istr, maxwid-1);
 	    }
-	    
+
 	    ucs4_strncpy(buf, breakp, len+10);	/* save broken line */
 	    buf[len+10-1] = '\0';
 	    ucs4_strncat(buf, ostr, len+10-ucs4_strlen(buf)-1);	/* add line that was there */
@@ -2627,11 +2627,11 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 
 	if(nlp){
 	    if(!*buf && !breakp){
-		if(ucs4_str_width(ostr) + ucs4_str_width(nlp->text) >= maxwid){	
-		    breakp = break_point(nlp->text, maxwid-ucs4_str_width(ostr), 
+		if(ucs4_str_width(ostr) + ucs4_str_width(nlp->text) >= maxwid){
+		    breakp = break_point(nlp->text, maxwid-ucs4_str_width(ostr),
 					 break_on_comma ? ',' : ' ',
 					 break_on_comma ? &quoted : NULL);
-		    
+
 		    if(breakp == nlp->text){	/* commas this line? */
 			for(tp=ostr; *tp  && *tp != ' '; tp++)
 			  ;
@@ -2647,7 +2647,7 @@ FormatLines(struct hdr_line *h,			/* where to begin formatting */
 		      retval = TRUE;
 
 		    if(retval){			/* only if something to do */
-			for(tp = &ostr[ucs4_strlen(ostr)],bp=nlp->text; bp<breakp; 
+			for(tp = &ostr[ucs4_strlen(ostr)],bp=nlp->text; bp<breakp;
 			tp++, bp++)
 			  *tp = *bp;		/* add breakp to this line */
 			*tp = '\0';
@@ -2732,7 +2732,7 @@ FormatSyncAttach(void)
 
 
 /*
- * PaintHeader - do the work of displaying the header from the given 
+ * PaintHeader - do the work of displaying the header from the given
  *               physical screen line the end of the header.
  *
  *       17 July 91 - fixed reshow to deal with arbitrarily large headers.
@@ -2837,7 +2837,7 @@ PaintHeader(int line,		/* physical line on screen */
 
 
 /*
- * PaintBody() - generic call to handle repainting everything BUT the 
+ * PaintBody() - generic call to handle repainting everything BUT the
  *		 header
  *
  *	notes:
@@ -2907,7 +2907,7 @@ display_for_send(void)
 
 
 /*
- * ArrangeHeader - set up display parm such that header is reasonably 
+ * ArrangeHeader - set up display parm such that header is reasonably
  *                 displayed
  */
 void
@@ -2953,29 +2953,29 @@ ComposerHelp(int level)
 		 (Pmaster->pine_flags & MDHDRONLY) ? "Address Book"
 						 : "Composer",
 		 headents[level].name);
-    saved_state = save_pico_state();
+    saved_state = save_igluno_state();
     (*Pmaster->helper)(headents[level].help, buf, 1);
     if(saved_state){
-	restore_pico_state(saved_state);
-	free_pico_state(saved_state);
+	restore_igluno_state(saved_state);
+	free_igluno_state(saved_state);
     }
 
     ttresize();
-    picosigs();					/* restore altered handlers */
+    iglunosigs();					/* restore altered handlers */
     return(TRUE);
 }
 
 
 
 /*
- * ToggleHeader() - set or unset pico values to the full screen size
+ * ToggleHeader() - set or unset igluno values to the full screen size
  *                  painting header if need be.
  */
 int
 ToggleHeader(int show)
 {
     /*
-     * check to see if we need to display the header... 
+     * check to see if we need to display the header...
      */
     if(show){
 	UpdateHeader(0);				/* figure bounds  */
@@ -3003,7 +3003,7 @@ HeaderLen(void)
     register struct hdr_line *lp;
     int      e;
     int      i;
-    
+
     i = 1;
     lp = ods.top_l;
     e  = ods.top_e;
@@ -3018,7 +3018,7 @@ HeaderLen(void)
 
 /*
  * first_hline() - return a pointer to the first displayable header line
- * 
+ *
  *	returns:
  *		1) pointer to first displayable line in header and header
  *                 entry, via side effect, that the first line is a part of
@@ -3039,7 +3039,7 @@ first_hline(int *entry)
 
 /*
  * first_sel_hline() - return a pointer to the first selectable header line
- * 
+ *
  *	returns:
  *		1) pointer to first selectable line in header and header
  *                 entry, via side effect, that the first line is a part of
@@ -3061,7 +3061,7 @@ first_sel_hline(int *entry)
 
 /*
  * next_hline() - return a pointer to the next line structure
- * 
+ *
  *	returns:
  *		1) pointer to next displayable line in header and header
  *                 entry, via side effect, that the next line is a part of
@@ -3088,7 +3088,7 @@ next_hline(int *entry, struct hdr_line *line)
 
 /*
  * next_sel_hline() - return a pointer to the next selectable line structure
- * 
+ *
  *	returns:
  *		1) pointer to next selectable line in header and header
  *                 entry, via side effect, that the next line is a part of
@@ -3116,10 +3116,10 @@ next_sel_hline(int *entry, struct hdr_line *line)
 
 /*
  * prev_hline() - return a pointer to the next line structure back
- * 
+ *
  *	returns:
- *              1) pointer to previous displayable line in header and 
- *                 the header entry that the next line is a part of 
+ *              1) pointer to previous displayable line in header and
+ *                 the header entry that the next line is a part of
  *                 via side effect
  *              2) NULL if no next line, leaving entry unchanged from
  *                 the value it had on entry.
@@ -3153,10 +3153,10 @@ prev_hline(int *entry, struct hdr_line *line)
 
 /*
  * prev_sel_hline() - return a pointer to the previous selectable line
- * 
+ *
  *	returns:
- *              1) pointer to previous selectable line in header and 
- *                 the header entry that the next line is a part of 
+ *              1) pointer to previous selectable line in header and
+ *                 the header entry that the next line is a part of
  *                 via side effect
  *              2) NULL if no next line, leaving entry unchanged from
  *                 the value it had on entry.
@@ -3190,7 +3190,7 @@ prev_sel_hline(int *entry, struct hdr_line *line)
 
 
 /*
- * first_requested_hline() - return pointer to first line that pico's caller
+ * first_requested_hline() - return pointer to first line that igluno's caller
  *			     asked that we start on.
  */
 struct hdr_line *
@@ -3215,26 +3215,26 @@ first_requested_hline(int *ent)
 
 
 /*
- * UpdateHeader() - determines the best range of lines to be displayed 
+ * UpdateHeader() - determines the best range of lines to be displayed
  *                  using the global ods value for the current line and the
- *		    top line, also sets ComposerTopLine and pico limits
+ *		    top line, also sets ComposerTopLine and igluno limits
  *
  *	showtop -- Attempt to show all header lines if they'll fit.
- *                    
+ *
  *      notes:
  *	        This is pretty ugly because it has to keep the current line
  *		on the screen in a reasonable location no matter what.
  *		There are also a couple of rules to follow:
- *                 1) follow paging conventions of pico (ie, half page 
+ *                 1) follow paging conventions of igluno (ie, half page
  *		      scroll)
- *                 2) if more than one page, always display last half when 
+ *                 2) if more than one page, always display last half when
  *                    pline is toward the end of the header
- * 
+ *
  *      returns:
  *             TRUE  if anything changed (side effects: new p_line, top_l
- *		     top_e, and pico parms)
- *             FALSE if nothing changed 
- *             
+ *		     top_e, and igluno parms)
+ *             FALSE if nothing changed
+ *
  */
 int
 UpdateHeader(int showtop)
@@ -3289,7 +3289,7 @@ UpdateHeader(int showtop)
     if(!ret)
       ret = !(ComposerTopLine == old_top);
 
-    if(wheadp->w_toprow != ComposerTopLine){	/* update pico params... */
+    if(wheadp->w_toprow != ComposerTopLine){	/* update igluno params... */
         wheadp->w_toprow = ComposerTopLine;
         wheadp->w_ntrows = ((i = BOTTOM() - ComposerTopLine) > 0) ? i : 0;
 	ret = TRUE;
@@ -3415,7 +3415,7 @@ InvertPrompt(int entry, int state)
 	*end = '\0';
     }
 
-    if(entry < 16 && (invert_ps&(1<<entry)) 
+    if(entry < 16 && (invert_ps&(1<<entry))
        == (state ? 1<<entry : 0)){	/* optimize ? */
 	int j;
 
@@ -3471,14 +3471,14 @@ partial_entries(void)
 {
     register struct headerentry *h;
     int                          is_on;
-  
+
     /*---- find out status of first rich header ---*/
     for(h = headents; !h->rich_header && h->name != NULL; h++)
       ;
 
     is_on = h->display_it;
-    for(h = headents; h->name != NULL; h++) 
-      if(h->rich_header) 
+    for(h = headents; h->name != NULL; h++)
+      if(h->rich_header)
         h->display_it = ! is_on;
 
     return(is_on);
@@ -3559,24 +3559,24 @@ physical_line(struct hdr_line *l)
  *                  with the given entry...
  *
  *    NOTES:
- * 
- *      BEWARE: this function can cause cur_l and top_l to get lost so BE 
+ *
+ *      BEWARE: this function can cause cur_l and top_l to get lost so BE
  *              CAREFUL before and after you call this function!!!
- * 
+ *
  *      There could to be something here to resolve cur_l and top_l
- *      reasonably into the new linked list for this entry.  
+ *      reasonably into the new linked list for this entry.
  *
  *      The reason this would mostly work without it is resolve_niks gets
  *      called for the most part in between fields.  Since we're moving
- *      to the beginning or end (i.e. the next/prev pointer in the old 
+ *      to the beginning or end (i.e. the next/prev pointer in the old
  *      freed cur_l is NULL) of the next entry, we get a new cur_l
  *      pointing at a good line.  Then since top_l is based on cur_l in
  *      NewTop() we have pretty much lucked out.
- * 
+ *
  *      Where we could get burned is in a canceled exit (ctrl|x).  Here
  *      nicknames get resolved into addresses, which invalidates cur_l
  *      and top_l.  Since we don't actually leave, we could begin editing
- *      again with bad pointers.  This would usually results in a nice 
+ *      again with bad pointers.  This would usually results in a nice
  *      core dump.
  *
  *      NOTE: The mangled argument is a little strange. It's used on both
@@ -3617,12 +3617,12 @@ call_builder(struct headerentry *entry, int *mangled, char **err)
 	sbuflen += (6*term.t_ncol);
         line = line->next;
     }
-    
+
     if((sbuf=(char *)malloc(sbuflen * sizeof(*sbuf))) == NULL){
 	emlwrite("Can't malloc space to expand address", NULL);
 	return(-1);
     }
-    
+
     *sbuf = '\0';
 
     /*
@@ -3641,7 +3641,7 @@ call_builder(struct headerentry *entry, int *mangled, char **err)
 	 * white space for pine's address builder if its not already there...
 	 * (This is some ancient requirement that is no longer needed.)
 	 *
-	 * Also if it's not a continuation (i.e., there's already and addr on 
+	 * Also if it's not a continuation (i.e., there's already and addr on
 	 * the line), and there's another line below, treat the new line as
 	 * an implied comma.
 	 * (This should only be done for address-type lines, not for regular
@@ -3667,7 +3667,7 @@ call_builder(struct headerentry *entry, int *mangled, char **err)
 		}
 	    }
 	    else if(line->prev != NULL && line->next != NULL){
-		if(ucs4_strchr(line->prev->text, ' ') != NULL 
+		if(ucs4_strchr(line->prev->text, ' ') != NULL
 		   && line->text[i-1] != ' '){
 		  ucs4_strncat(line->text, space, HLSZ-i-1);
 		  line->text[HLSZ-1] = '\0';
@@ -3750,14 +3750,14 @@ call_builder(struct headerentry *entry, int *mangled, char **err)
     }
 
     /*
-     * The builder may make a new call back to pico() so we save and
-     * restore the pico state.
+     * The builder may make a new call back to igluno() so we save and
+     * restore the igluno state.
      */
-    saved_state = save_pico_state();
+    saved_state = save_igluno_state();
     retval = (*entry->builder)(sbuf, &s, err, headarg, mangled);
     if(saved_state){
-	restore_pico_state(saved_state);
-	free_pico_state(saved_state);
+	restore_igluno_state(saved_state);
+	free_igluno_state(saved_state);
     }
 
     if(mangled && *mangled & BUILDER_MESSAGE_DISPLAYED){
@@ -3813,7 +3813,7 @@ call_builder(struct headerentry *entry, int *mangled, char **err)
 	nextarg = arg->next;
 	if(arg->tptr)
 	  free(arg->tptr);
-	
+
 	free(arg);
     }
 
@@ -3833,17 +3833,17 @@ call_expander(void)
       return;
 
     /*
-     * Since expander may make a call back to pico() we need to
-     * save and restore pico state.
+     * Since expander may make a call back to igluno() we need to
+     * save and restore igluno state.
      */
-    if((saved_state = save_pico_state()) != NULL){
+    if((saved_state = save_igluno_state()) != NULL){
 
 	expret = (*Pmaster->expander)(headents, &s);
 
-	restore_pico_state(saved_state);
-	free_pico_state(saved_state);
+	restore_igluno_state(saved_state);
+	free_igluno_state(saved_state);
 	ttresize();
-	picosigs();
+	iglunosigs();
 
 	if(expret > 0 && s){
 	    char               *tbuf, *p;
@@ -3860,7 +3860,7 @@ call_expander(void)
 
 		while(e->name && e->blank)
 		  e++;
-		
+
 		if(e->name == NULL)
 		  continue;
 
@@ -3871,7 +3871,7 @@ call_expander(void)
 		    fs_give((void **) &p);
 		  }
 		}
-		
+
 		if(sz > biggest){
 		    biggest = sz;
 		    free(tbuf);
@@ -3887,7 +3887,7 @@ call_expander(void)
 		    fs_give((void **) &p);
 		  }
 		}
-		  
+
 		if(strcmp(tbuf, s[i])){ /* it changed */
 		    struct hdr_line *zline;
 
@@ -3949,7 +3949,7 @@ strend(UCS *s, UCS ch)
 
 
 /*
- * ucs4_strqchr - returns pointer to first non-quote-enclosed occurance of ch in 
+ * ucs4_strqchr - returns pointer to first non-quote-enclosed occurance of ch in
  *           the given string.  otherwise NULL.
  *      s -- the string
  *     ch -- the character we're looking for
@@ -4003,8 +4003,8 @@ KillHeaderLine(struct hdr_line *l, int append)
 	if (c[i] == '\0')  /* don't insert a new line after this line*/
 	  nl = FALSE;
         /*put to be deleted part into kill buffer */
-	for (i=ods.p_ind; c[i] != '\0'; i++) 
-	  kinsert(c[i]);                       
+	for (i=ods.p_ind; c[i] != '\0'; i++)
+	  kinsert(c[i]);
     }else{
 	while(*c != '\0')				/* splat out the line */
 	  kinsert(*c++);
@@ -4050,11 +4050,11 @@ KillHeaderLine(struct hdr_line *l, int append)
 
 
 /*
- * SaveHeaderLines() - insert the saved lines in the list before the 
+ * SaveHeaderLines() - insert the saved lines in the list before the
  *                     current line in the header
  *
  *	notes:
- *		Once again, just using emacs' kill buffer and its 
+ *		Once again, just using emacs' kill buffer and its
  *              functions.
  *
  *	returns:
@@ -4175,7 +4175,7 @@ SaveHeaderLines(void)
 	if(FormatLines(ods.cur_l, empty, LINEWID(),
 		       headents[ods.cur_e].break_on_comma, 0) == -1) {
 	   i = FALSE;
-	} else {  
+	} else {
 	  len = 0;
 	  travel = ods.cur_l;
 	  while (len < work_buf_len + ods.p_ind){
@@ -4281,13 +4281,13 @@ break_point(UCS *line, int maxwid, UCS breakch, int *quotedarg)
  *
  *	notes:
  *		the case of first line in field is kind of bogus.  since
- *              the array of headers has a pointer to the first line, and 
- *		i don't want to worry about this too much, i just copied 
+ *              the array of headers has a pointer to the first line, and
+ *		i don't want to worry about this too much, i just copied
  *		the line below and removed it rather than the first one
  *		from the list.
  *
  *	returns:
- *		TRUE if it worked 
+ *		TRUE if it worked
  *		FALSE otherwise
  */
 int
@@ -4355,7 +4355,7 @@ ShowPrompt(void)
     }
     else
       menu_header[TO_KEY].name  = NULL;
-    
+
     if(Pmaster && Pmaster->exit_label)
       menu_header[SEND_KEY].label = Pmaster->exit_label;
     else if(gmode & (MDVIEW | MDHDRONLY))
@@ -4408,7 +4408,7 @@ ShowPrompt(void)
 
 
 /*
- * packheader - packup all of the header fields for return to caller. 
+ * packheader - packup all of the header fields for return to caller.
  *              NOTE: all of the header info passed in, including address
  *                    of the pointer to each string is contained in the
  *                    header entry array "headents".
@@ -4465,7 +4465,7 @@ packheader(void)
         }
 
         line = headents[i].hd_text;
-        if(count <= headents[i].maxlen){		
+        if(count <= headents[i].maxlen){
             *headents[i].realaddr[0] = '\0';
         }
         else{
@@ -4518,7 +4518,7 @@ packheader(void)
         i++;
     }
 
-    return(retval);    
+    return(retval);
 }
 
 
@@ -4530,7 +4530,7 @@ void
 zotheader(void)
 {
     register struct headerentry *i;
-  
+
     for(i = headents; headents && i->name; i++)
       zotentry(i->hd_text);
 }
@@ -4554,7 +4554,7 @@ zotentry(struct hdr_line *l)
 
 
 /*
- * zotcomma - blast any trailing commas and white space from the end 
+ * zotcomma - blast any trailing commas and white space from the end
  *	      of the given line
  */
 int
@@ -4581,12 +4581,12 @@ zotcomma(UCS *s)
 
 /*
  * Save the current state of global variables so that we can restore
- * them later. This is so we can call pico again.
+ * them later. This is so we can call igluno again.
  * Also have to initialize some variables that normally would be set to
  * zero on startup.
  */
 VARS_TO_SAVE *
-save_pico_state(void)
+save_igluno_state(void)
 {
     VARS_TO_SAVE  *ret;
     extern int     vtrow;
@@ -4594,9 +4594,9 @@ save_pico_state(void)
     extern int     lbound;
     extern VIDEO **vscreen;
     extern VIDEO **pscreen;
-    extern int     pico_all_done;
+    extern int     igluno_all_done;
     extern jmp_buf finstate;
-    extern UCS    *pico_anchor;
+    extern UCS    *igluno_anchor;
 
     if((ret = (VARS_TO_SAVE *)malloc(sizeof(VARS_TO_SAVE))) == NULL)
       return(ret);
@@ -4609,9 +4609,9 @@ save_pico_state(void)
     ret->ods = ods;
     ret->delim_ps = delim_ps;
     ret->invert_ps = invert_ps;
-    ret->pico_all_done = pico_all_done;
+    ret->igluno_all_done = igluno_all_done;
     memcpy(ret->finstate, finstate, sizeof(jmp_buf));
-    ret->pico_anchor = pico_anchor;
+    ret->igluno_anchor = igluno_anchor;
     ret->Pmaster = Pmaster;
     ret->fillcol = fillcol;
     if((ret->pat = (UCS *)malloc(sizeof(UCS) * (ucs4_strlen(pat)+1))) != NULL)
@@ -4639,7 +4639,7 @@ save_pico_state(void)
     ret->km_popped = km_popped;
     ret->mrow = term.t_mrow;
 
-    /* Initialize for next pico call */
+    /* Initialize for next igluno call */
     wheadp = NULL;
     curwp = NULL;
     bheadp = NULL;
@@ -4650,16 +4650,16 @@ save_pico_state(void)
 
 
 void
-restore_pico_state(VARS_TO_SAVE *state)
+restore_igluno_state(VARS_TO_SAVE *state)
 {
     extern int     vtrow;
     extern int     vtcol;
     extern int     lbound;
     extern VIDEO **vscreen;
     extern VIDEO **pscreen;
-    extern int     pico_all_done;
+    extern int     igluno_all_done;
     extern jmp_buf finstate;
-    extern UCS    *pico_anchor;
+    extern UCS    *igluno_anchor;
 
     clearcursor();
     vtrow = state->vtrow;
@@ -4670,9 +4670,9 @@ restore_pico_state(VARS_TO_SAVE *state)
     ods = state->ods;
     delim_ps = state->delim_ps;
     invert_ps = state->invert_ps;
-    pico_all_done = state->pico_all_done;
+    igluno_all_done = state->igluno_all_done;
     memcpy(finstate, state->finstate, sizeof(jmp_buf));
-    pico_anchor = state->pico_anchor;
+    igluno_anchor = state->igluno_anchor;
     Pmaster = state->Pmaster;
     if(Pmaster)
       headents = Pmaster->headents;
@@ -4707,7 +4707,7 @@ restore_pico_state(VARS_TO_SAVE *state)
 
 
 void
-free_pico_state(VARS_TO_SAVE *state)
+free_igluno_state(VARS_TO_SAVE *state)
 {
     if(state->pat)
       free(state->pat);
@@ -4728,7 +4728,7 @@ fix_mangle_and_err(int *mangled, char **errmsg, char *name)
 {
     if(mangled && *mangled){
 	ttresize();
-	picosigs();
+	iglunosigs();
 	PaintBody(0);
 	*mangled = 0;
     }
@@ -4768,7 +4768,7 @@ mark_sticky(struct headerentry *h)
 #undef	HeaderEditor
 
 /*
- * Wraper function for the real header editor. 
+ * Wraper function for the real header editor.
  * Does the important tasks of:
  *	1) verifying that we _can_ edit the headers.
  *	2) acting on the result code from the header editor.
@@ -4777,15 +4777,15 @@ int
 HeaderEditor(int f, int n)
 {
     int  retval;
-    
-    
+
+
 #ifdef _WINDOWS
     /* Sometimes we get here from a scroll callback, which
      * is no good at all because mswin is not ready to process input and
      * this _headeredit() will never do anything.
      * Putting this test here was the most general solution I could think
      * of. */
-    if (!mswin_caninput()) 
+    if (!mswin_caninput())
 	return (-1);
 #endif
 

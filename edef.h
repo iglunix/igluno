@@ -95,7 +95,7 @@ extern	int	ComposerTopLine;	/* TRUE if message line is open */
 extern	int	ComposerEditing;	/* TRUE if message line is open */
 extern	char	modecode[];		/* letters to represent modes	*/
 extern	KEYTAB	keytab[];		/* key bind to functions table	*/
-extern	KEYTAB	pkeytab[];		/* pico's function table	*/
+extern	KEYTAB	pkeytab[];		/* igluno's function table	*/
 extern	long	gmode;			/* global editor mode		*/
 extern  int     sgarbf;                 /* State of screen unknown      */
 extern  int     mpresf;                 /* Stuff in message line        */
@@ -127,16 +127,16 @@ extern  BUFFER  *bfind(char *, int, int); /* Lookup a buffer by name */
 extern  LINE    *lalloc(int used);   	/* Allocate a line              */
 extern  int	 km_popped;		/* menu popped up               */
 /*
- * This is a weird one. It has to be defined differently for pico and for
+ * This is a weird one. It has to be defined differently for igluno and for
  * pine. It seems to need to be defined at startup as opposed to set later.
- * It doesn't work to set it later in pico. When pico is used with a
+ * It doesn't work to set it later in igluno. When igluno is used with a
  * screen reader it seems to jump to the cursor every time through the
  * mswin_charavail() loop in GetKey, and the timeout is this long. So we
  * just need to set it higher than we do in pine. If we understood this
- * we would probably see that we don't need any timer at all in pico, but
+ * we would probably see that we don't need any timer at all in igluno, but
  * we don't remember why it is here so we'd better leave it.
  *
- * This is defined in .../pico/main.c and in .../alpine/alpine.c.
+ * This is defined in .../igluno/main.c and in .../alpine/alpine.c.
  */
 extern  int	 my_timer_period;	/* here so can be set           */
 #ifdef	MOUSE

@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_FILESYS_INCLUDED
-#define PICO_OSDEP_FILESYS_INCLUDED
+#ifndef igluno_OSDEP_FILESYS_INCLUDED
+#define igluno_OSDEP_FILESYS_INCLUDED
 
 
 #include "../../pith/osdep/canaccess.h" /* for *_ACCESS */
@@ -39,4 +39,4 @@ int	 ffclose(void);
 int	 ffelbowroom(void);
 
 
-#endif /* PICO_OSDEP_FILESYS_INCLUDED */
+#endif /* igluno_OSDEP_FILESYS_INCLUDED */

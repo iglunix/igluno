@@ -13,11 +13,11 @@
  * ========================================================================
  */
 
-#ifndef PICO_KEYDEFS_INCLUDED
-#define PICO_KEYDEFS_INCLUDED
+#ifndef igluno_KEYDEFS_INCLUDED
+#define igluno_KEYDEFS_INCLUDED
 
 /*
- * Key value definitions for pico/pine
+ * Key value definitions for igluno/pine
  */
 
 
@@ -160,4 +160,4 @@
 #define OOOPF11	PF2OOOPF(PF11)
 #define OOOPF12	PF2OOOPF(PF12)
 
-#endif	/* PICO_KEYDEFS_INCLUDED */
+#endif	/* igluno_KEYDEFS_INCLUDED */

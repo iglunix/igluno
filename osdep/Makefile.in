@@ -43,7 +43,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = pico/osdep
+subdir = igluno/osdep
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
@@ -59,15 +59,15 @@ CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
-libpicoosd_a_AR = $(AR) $(ARFLAGS)
-libpicoosd_a_LIBADD =
-am_libpicoosd_a_OBJECTS = altedit.$(OBJEXT) chkpoint.$(OBJEXT) \
+libiglunoosd_a_AR = $(AR) $(ARFLAGS)
+libiglunoosd_a_LIBADD =
+am_libiglunoosd_a_OBJECTS = altedit.$(OBJEXT) chkpoint.$(OBJEXT) \
 	color.$(OBJEXT) filesys.$(OBJEXT) fsync.$(OBJEXT) \
 	getkey.$(OBJEXT) mouse.$(OBJEXT) newmail.$(OBJEXT) \
 	popen.$(OBJEXT) raw.$(OBJEXT) read.$(OBJEXT) shell.$(OBJEXT) \
 	signals.$(OBJEXT) spell.$(OBJEXT) terminal.$(OBJEXT) \
 	truncate.$(OBJEXT) tty.$(OBJEXT)
-libpicoosd_a_OBJECTS = $(am_libpicoosd_a_OBJECTS)
+libiglunoosd_a_OBJECTS = $(am_libiglunoosd_a_OBJECTS)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -80,8 +80,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libpicoosd_a_SOURCES)
-DIST_SOURCES = $(libpicoosd_a_SOURCES)
+SOURCES = $(libiglunoosd_a_SOURCES)
+DIST_SOURCES = $(libiglunoosd_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -232,8 +232,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = libpicoosd.a
-libpicoosd_a_SOURCES = altedit.c chkpoint.c color.c filesys.c fsync.c getkey.c mouse.c \
+noinst_LIBRARIES = libiglunoosd.a
+libiglunoosd_a_SOURCES = altedit.c chkpoint.c color.c filesys.c fsync.c getkey.c mouse.c \
 	newmail.c popen.c raw.c read.c shell.c signals.c spell.c terminal.c truncate.c tty.c
 
 AM_CPPFLAGS = -I$(top_builddir)/include -I$(top_srcdir)/include
@@ -250,9 +250,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  pico/osdep/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  igluno/osdep/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  pico/osdep/Makefile
+	  $(AUTOMAKE) --foreign  igluno/osdep/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -273,10 +273,10 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libpicoosd.a: $(libpicoosd_a_OBJECTS) $(libpicoosd_a_DEPENDENCIES) 
-	-rm -f libpicoosd.a
-	$(libpicoosd_a_AR) libpicoosd.a $(libpicoosd_a_OBJECTS) $(libpicoosd_a_LIBADD)
-	$(RANLIB) libpicoosd.a
+libiglunoosd.a: $(libiglunoosd_a_OBJECTS) $(libiglunoosd_a_DEPENDENCIES) 
+	-rm -f libiglunoosd.a
+	$(libiglunoosd_a_AR) libiglunoosd.a $(libiglunoosd_a_OBJECTS) $(libiglunoosd_a_LIBADD)
+	$(RANLIB) libiglunoosd.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

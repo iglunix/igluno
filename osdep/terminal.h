@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_TERMINAL_INCLUDED
-#define PICO_OSDEP_TERMINAL_INCLUDED
+#ifndef igluno_OSDEP_TERMINAL_INCLUDED
+#define igluno_OSDEP_TERMINAL_INCLUDED
 
 
 /*
@@ -47,4 +47,4 @@ void	 putpad(char *);
 #endif
 
 
-#endif /* PICO_OSDEP_TERMINAL_INCLUDED */
+#endif /* igluno_OSDEP_TERMINAL_INCLUDED */

@@ -1,5 +1,5 @@
-#ifndef _PICO_OS_INCLUDED
-#define _PICO_OS_INCLUDED
+#ifndef _igluno_OS_INCLUDED
+#define _igluno_OS_INCLUDED
 
 
 /*----------------------------------------------------------------------
@@ -137,7 +137,7 @@ typedef unsigned short usign16_t;
 
 /*
  * What and where the tool that checks spelling is located.  If this is
- * undefined, then the spelling checker is not compiled into pico.
+ * undefined, then the spelling checker is not compiled into igluno.
  */
 #define	SPELLER
 
@@ -152,8 +152,8 @@ typedef unsigned short usign16_t;
 /*	possible names and paths of help files under different OSs	*/
 
 char *pathname[] = {
-	"picorc",
-	"pico.hlp",
+	"iglunorc",
+	"igluno.hlp",
 	"\\usr\\local\\",
 	"\\usr\\lib\\",
 	""
@@ -178,4 +178,4 @@ char *pathname[] = {
 /* extern int   sys_nerr; */
 
 
-#endif /* _PICO_OS_INCLUDED */
+#endif /* _igluno_OS_INCLUDED */

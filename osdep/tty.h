@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_TTY_INCLUDED
-#define PICO_OSDEP_TTY_INCLUDED
+#ifndef igluno_OSDEP_TTY_INCLUDED
+#define igluno_OSDEP_TTY_INCLUDED
 
 
 #include <general.h>
@@ -33,4 +33,4 @@ int	ttputc(UCS);
 void	ttgetwinsz(int *, int *);
 #endif /* !_WINDOWS */
 
-#endif /* PICO_OSDEP_TTY_INCLUDED */
+#endif /* igluno_OSDEP_TTY_INCLUDED */

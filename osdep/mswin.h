@@ -56,7 +56,7 @@ typedef struct {
 
 
 /*
- * Struct to tell pico how to build and what to return when
+ * Struct to tell igluno how to build and what to return when
  * it's asked to build a popup menu.
  */
 typedef struct _popup {
@@ -258,7 +258,7 @@ int		mswin_openfile (char *dir, int nMaxDName, char *fName, int nMaxFName, char 
 int		mswin_multopenfile (char *dir, int nMaxDName, char *fName, int nMaxFName, char *extlist);
 char	       *mswin_rgbchoice(char *pOldRGB);
 void		mswin_killbuftoclip (getc_t copyfunc);
-void		pico_popup();
+void		igluno_popup();
 void		mswin_paste_popup();
 int		mswin_fflush (FILE *f);
 void		mswin_setperiodiccallback (cbvoid_t periodiccb, long period);
@@ -358,7 +358,7 @@ void            MemFailSoon (MemSize);
 #endif
 
 /* functions from win moved to mswin.c */
-int	pico_scroll_callback (int, long);
+int	igluno_scroll_callback (int, long);
 #undef sleep
 int     sleep (int);
 

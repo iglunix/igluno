@@ -163,7 +163,7 @@ newline(int f, int n)
     }
 
     /* if we are in C mode and this is a default <NL> */
-    /* pico's never in C mode */
+    /* igluno's never in C mode */
 
     if(Pmaster && Pmaster->allow_flowed_text && curwp->w_doto
        && ucs4_isspace(lgetc(curwp->w_dotp, curwp->w_doto - 1).c)

@@ -50,7 +50,7 @@ void	mouseoff(void);
 
 
 
-/*
+/* 
  * init_mouse - check for xterm and initialize mouse tracking if present...
  */
 int
@@ -69,7 +69,7 @@ init_mouse(void)
 }
 
 
-/*
+/* 
  * end_mouse - clear xterm mouse tracking if present...
  */
 void
@@ -94,7 +94,7 @@ mouseexist(void)
 
 
 /*
- * mouseon - call made available for programs calling pico to turn ON the
+ * mouseon - call made available for programs calling igluno to turn ON the
  *           mouse cursor.
  */
 void
@@ -105,7 +105,7 @@ mouseon(void)
 
 
 /*
- * mouseon - call made available for programs calling pico to turn OFF the
+ * mouseon - call made available for programs calling igluno to turn OFF the
  *           mouse cursor.
  */
 void
@@ -115,11 +115,11 @@ mouseoff(void)
 }
 
 
-/*
- * checkmouse - look for mouse events in key menu and return
+/* 
+ * checkmouse - look for mouse events in key menu and return 
  *              appropriate value.
  */
-/*int
+int
 checkmouse(unsigned long *ch, int down, int mcol, int mrow)
 {
     static int oindex;
@@ -129,14 +129,14 @@ checkmouse(unsigned long *ch, int down, int mcol, int mrow)
     if(!mexist || mcol < 0 || mrow < 0)
       return(FALSE);
 
-    if(down)
+    if(down)			/* button down */
       oindex = -1;
 
     for(mp = mfunc; mp; mp = mp->next)
       if(mp->action && M_ACTIVE(mrow, mcol, mp))
-	break;*/
+	break;
 
-    /*if(mp){
+    if(mp){
 	unsigned long r;
 
 	r = (*mp->action)(down ? M_EVENT_DOWN : M_EVENT_UP,
@@ -147,7 +147,7 @@ checkmouse(unsigned long *ch, int down, int mcol, int mrow)
 	}
     }
     else{
-	while(1){
+	while(1){			/* see if we understand event */
 	    if(i >= 12){
 		i = -1;
 		break;
@@ -157,72 +157,72 @@ checkmouse(unsigned long *ch, int down, int mcol, int mrow)
 	      break;
 
 	    i++;
-	} */
+	}
 
-	/*if(down){			/* button down */
-	    /*oindex = i;			/* remember where */
-	    /* if(i != -1
+	if(down){			/* button down */
+	    oindex = i;			/* remember where */
+	    if(i != -1
 	       && menuitems[i].label_hiliter != NULL
-	       && menuitems[i].val != mnoop)  invert label
-	      (*menuitems[i].label_hiliter)(1, &menuitems[i]); */
-	/*}*/
-	/*else{				*//* button up */
-	    /*if(oindex != -1){
+	       && menuitems[i].val != mnoop)  /* invert label */
+	      (*menuitems[i].label_hiliter)(1, &menuitems[i]);
+	}
+	else{				/* button up */
+	    if(oindex != -1){
 		if(i == oindex){
-
+		    *ch = menuitems[i].val;
 		    rv = TRUE;
-		}*/
-
-
-
+		}
+	    }
+	}
+    }
 
     /* restore label */
-    /* if(!down
+    if(!down
        && oindex != -1
        && menuitems[oindex].label_hiliter != NULL
        && menuitems[oindex].val != mnoop)
-      (*menuitems[oindex].label_hiliter)(0, &menuitems[oindex]); */
+      (*menuitems[oindex].label_hiliter)(0, &menuitems[oindex]);
 
-    /*return(rv);*/
-
+    return(rv);
+}
 
 
 /*
  * invert_label - highlight the label of the given menu item.
  */
-/*void
+void
 invert_label(int state, MENUITEM *m)
 {
     unsigned i, j;
     int   col_offset, savettrow, savettcol;
     char *lp;
 
-    get_cursor(&savettrow, &savettcol);*/
+    get_cursor(&savettrow, &savettcol);
 
     /*
      * Leave the command name bold
      */
-    /* col_offset = (state || !(lp=strchr(m->label, ' '))) ? 0 : (lp - m->label); */
-    /* movecursor((int)m->tl.r, (int)m->tl.c + col_offset); */
-    /*flip_inv(state);*/
+    col_offset = (state || !(lp=strchr(m->label, ' '))) ? 0 : (lp - m->label);
+    movecursor((int)m->tl.r, (int)m->tl.c + col_offset);
+    flip_inv(state);
 
-    /*for(i = m->tl.r; i <= m->br.r; i++)
+    for(i = m->tl.r; i <= m->br.r; i++)
       for(j = m->tl.c + col_offset; j <= m->br.c; j++)
 	if(i == m->lbl.r && j == m->lbl.c + col_offset && m->label){
-	    lp = m->label + col_offset;
+	    lp = m->label + col_offset;		/* show label?? */
 	    while(*lp && j++ < m->br.c)
-	      putc(*lp++, stdout);*/
+	      putc(*lp++, stdout);
 
-	    /*continue;*/
+	    continue;
+	}
+	else
+	  putc(' ', stdout);
 
-	/*else
-	  putc(' ', stdout);*/
+    if(state)
+      flip_inv(FALSE);
 
-    /*if(state)
-      flip_inv(FALSE);*/
-
-    /*movecursor(savettrow, savettcol);*/
-
+    movecursor(savettrow, savettcol);
+}
 
 #else /* _WINDOWS */
 
@@ -232,7 +232,7 @@ static int mexist = 0;			/* is the mouse driver installed? */
 static int nbuttons;			/* number of buttons on the mouse */
 static unsigned mnoop;
 
-/*
+/* 
  * init_mouse - check for and initialize mouse driver...
  */
 
@@ -261,13 +261,13 @@ mouseexist(void)
     return(mexist);
 }
 
-/*
+/* 
  * checkmouse - Check mouse and return maped command.
  *
- *	EXPORTED to pico.
+ *	EXPORTED to igluno.
  *      NOTE: "down", "xxx", and "yyy" aren't used under windows.
  */
-int
+int	
 checkmouse (unsigned long *ch, int ddd, int xxx, int yyy)
 {
     static int	oindex;		/* Index of previous mouse down. */
@@ -279,24 +279,24 @@ checkmouse (unsigned long *ch, int ddd, int xxx, int yyy)
     int		i = 0;
     MENUITEM	*mp;
 
-
+    
     *ch = 0;
-
+    
     /* Mouse installed? */
     if (!mexist)
 	return (FALSE);
 
-    if (!mswin_getmouseevent (&mouse))
+    if (!mswin_getmouseevent (&mouse)) 
 	return (FALSE);
 
 
     /* Location of mouse event. */
     mcol = mouse.nColumn;
     mrow = mouse.nRow;
-
-
-
-    /*
+    
+    
+    
+    /* 
      * If there is a tracking function it gets all the mouse events
      * reguardless of where they occur.
      */
@@ -308,7 +308,7 @@ checkmouse (unsigned long *ch, int ddd, int xxx, int yyy)
 	}
 	return (rv);
     }
-
+    
 
 
 
@@ -399,7 +399,7 @@ invert_label(int state, MENUITEM *m)
     if(m->val == mnoop)
       return;
 
-
+  
     mswin_getpos (&r, &c);			/* get cursor position */
     wasShown = mswin_showcaret (0);
     old_state = mswin_getrevstate ();
@@ -409,9 +409,9 @@ invert_label(int state, MENUITEM *m)
     col_offset = (state || !(lp=strchr(m->label, ' '))) ? 0 : (lp - m->label);
     (*term.t_move)(m->tl.r, m->tl.c + col_offset);
     if(state && m->kncp)
-      lastc = pico_set_colorp(m->kncp, PSC_REV|PSC_RET);
+      lastc = igluno_set_colorp(m->kncp, PSC_REV|PSC_RET);
     else if(!state && m->klcp)
-      lastc = pico_set_colorp(m->klcp, PSC_NORM|PSC_RET);
+      lastc = igluno_set_colorp(m->klcp, PSC_NORM|PSC_RET);
     else
       (*term.t_rev)(state);
 
@@ -430,7 +430,7 @@ invert_label(int state, MENUITEM *m)
     }
 
     if(lastc){
-	(void)pico_set_colorp(lastc, PSC_NONE);
+	(void)igluno_set_colorp(lastc, PSC_NONE);
 	free_color_pair(&lastc);
     }
     else

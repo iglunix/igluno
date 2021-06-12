@@ -26,8 +26,8 @@ static char rcsid[] = "$Id: display.c 1014 2008-03-26 17:27:45Z hubert@u.washing
  *
  */
 
-/* #include	"../c-client/mail.h"
-#include	"../c-client/utf8.h" */
+#include	"../c-client/mail.h"
+#include	"../c-client/utf8.h"
 
 #ifdef _WINDOWS
 /* wingdi.h uses ERROR (!) and we aren't using the c-client ERROR so... */
@@ -54,15 +54,15 @@ int      dumblroot(long, int);
 unsigned cellwidth_ptr_to_ptr(CELL *pstart, CELL *pend);
 unsigned vcellwidth_a_to_b(int row, int a, int b);
 #ifdef _WINDOWS
-void    pico_config_menu_items (KEYMENU *);
+void    igluno_config_menu_items (KEYMENU *);
 int     update_scroll (void);
 #endif /* _WINDOWS */
 
 
 /*
- * Standard pico keymenus...
+ * Standard igluno keymenus...
  */
-static KEYMENU menu_pico[] = {
+static KEYMENU menu_igluno[] = {
     {"^G", N_("Get Help"), KS_SCREENHELP},	{"^O", N_("WriteOut"), KS_SAVEFILE},
     {"^R", N_("Read File"), KS_READFILE},	{"^Y", N_("Prev Pg"), KS_PREVPAGE},
     {"^K", N_("Cut Text"), KS_NONE},	{"^C", N_("Cur Pos"), KS_CURPOSITION},
@@ -98,11 +98,11 @@ static KEYMENU menu_compose[] = {
 
 
 /*
- * Definition's for pico's modeline
+ * Definition's for igluno's modeline
  */
-#define	PICO_TITLE	"  UW PICO %s"
-#define	PICO_MOD_MSG	"Modified"
-#define	PICO_NEWBUF_MSG	"New Buffer"
+#define	igluno_TITLE	"  UW igluno %s"
+#define	igluno_MOD_MSG	"Modified"
+#define	igluno_NEWBUF_MSG	"New Buffer"
 
 #define WFDEBUG 0                       /* Window flag debug. */
 
@@ -447,8 +447,8 @@ update(void)
 		  i = 0;
 	    }
             else if(TERM_OPTIMIZE){
-		/*
-		 * find dotp, if its been moved just above or below the
+		/* 
+		 * find dotp, if its been moved just above or below the 
 		 * window, use scrollxxx() to facilitate quick redisplay...
 		 */
 		lp = lforw(wp->w_dotp);
@@ -490,13 +490,13 @@ update(void)
 		switch(scroll){
 		  case 1:			/* scroll text down */
 		    j = j-i+1;			/* add one for dot line */
-			/*
-			 * do we scroll down the header as well?  Well, only
-			 * if we're not editing the header, we've backed up
-			 * to the top, and the composer is not being
+			/* 
+			 * do we scroll down the header as well?  Well, only 
+			 * if we're not editing the header, we've backed up 
+			 * to the top, and the composer is not being 
 			 * displayed...
 			 */
-		    if(Pmaster && Pmaster->headents && !ComposerEditing
+		    if(Pmaster && Pmaster->headents && !ComposerEditing 
 		       && (lback(lp) == wp->w_bufp->b_linep)
 		       && (ComposerTopLine == COMPOSER_TOP_LINE))
 		      j += entry_line(1000, TRUE); /* Never > 1000 headers */
@@ -506,15 +506,15 @@ update(void)
 		  case 2:			/* scroll text up */
 		    j = wp->w_ntrows - (j-i);	/* we chose new top line! */
 		    if(Pmaster && j){
-			/*
-			 * do we scroll down the header as well?  Well, only
-			 * if we're not editing the header, we've backed up
-			 * to the top, and the composer is not being
+			/* 
+			 * do we scroll down the header as well?  Well, only 
+			 * if we're not editing the header, we've backed up 
+			 * to the top, and the composer is not being 
 			 * displayed...
 			 */
-			if(!ComposerEditing
+			if(!ComposerEditing 
 			   && (ComposerTopLine != COMPOSER_TOP_LINE))
-			  scrollup(wp, COMPOSER_TOP_LINE,
+			  scrollup(wp, COMPOSER_TOP_LINE, 
 				   j+entry_line(1000, TRUE));
 			else
 			  scrollup(wp, -1, j);
@@ -543,7 +543,7 @@ out:
 			      i = 1;
 			    while(wp->w_linep != wp->w_bufp->b_linep && i--)
 			      wp->w_linep = lforw(wp->w_linep);
-
+			    
 			}
 			else
 			  ToggleHeader(1);
@@ -651,7 +651,7 @@ out:
       lbound = 0;				/* not extended line */
 
     /* make sure no lines need to be de-extended because the cursor is
-     * no longer on them
+     * no longer on them 
      */
 
     wp = wheadp;
@@ -690,7 +690,7 @@ out:
     if (sgarbf != FALSE){
 	if(Pmaster){
 	    int rv;
-
+       
 	    showCompTitle();
 
 	    if(ComposerTopLine != COMPOSER_TOP_LINE){
@@ -699,7 +699,7 @@ out:
 	    }
 
 	    /*
-	     * since we're using only a portion of the screen and only
+	     * since we're using only a portion of the screen and only 
 	     * one buffer, only clear enough screen for the current window
 	     * which is to say the *only* window.
 	     */
@@ -710,7 +710,7 @@ out:
 	    }
 	    rv = (*Pmaster->showmsg)('X' & 0x1f);	/* ctrl-L */
 	    ttresize();
-	    picosigs();		/* restore altered handlers */
+	    iglunosigs();		/* restore altered handlers */
 	    if(rv)		/* Did showmsg corrupt the display? */
 	      PaintBody(0);	/* Yes, repaint */
 	    movecursor(wheadp->w_toprow, 0);
@@ -789,16 +789,16 @@ out:
 	    if(lastflag&CFFILL){
 		/* TRANSLATORS: UnJustify means undo the previous
 		   Justify command. */
-		menu_pico[UNCUT_KEY].label = N_("UnJustify");
+		menu_igluno[UNCUT_KEY].label = N_("UnJustify");
 		if(!(lastflag&CFFLBF)){
 		    emlwrite(_("Can now UnJustify!"), NULL);
 		    mpresf = FARAWAY;	/* remove this after next keystroke! */
 		}
 	    }
 	    else
-	      menu_pico[UNCUT_KEY].label = N_("UnCut Text");
+	      menu_igluno[UNCUT_KEY].label = N_("UnCut Text");
 
-	    wkeyhelp(menu_pico);
+	    wkeyhelp(menu_igluno);
 	    sgarbk = FALSE;
         }
     }
@@ -814,7 +814,7 @@ out:
 #ifdef _WINDOWS
     mswin_endupdate ();
 
-    /*
+    /* 
      * Update the scroll bars.  This function is where curbp->b_linecnt
      * is really managed.  See update_scroll.
      */
@@ -1119,7 +1119,7 @@ modeline(WINDOW *wp)
 	    menu_compose[PSTPN_KEY].label = (Pmaster->headents)
 					      ? N_("Postpone") : NULL;
 	    menu_compose[WHERE_KEY].name  = (Pmaster->alt_ed) ? "^_" : "^W";
-	    menu_compose[WHERE_KEY].label = (Pmaster->alt_ed) ? N_("Alt Edit")
+	    menu_compose[WHERE_KEY].label = (Pmaster->alt_ed) ? N_("Alt Edit") 
 							      : N_("Where is");
 	    KS_OSDATASET(&menu_compose[WHERE_KEY],
 			 (Pmaster->alt_ed) ? KS_ALTEDITOR : KS_WHEREIS);
@@ -1139,18 +1139,18 @@ modeline(WINDOW *wp)
 	vscreen[0]->v_flag |= VFCHG; /* Redraw next time. */
 	vtmove(0, 0);		/* Seek to right line. */
 
-	snprintf(t1, sizeof(t1), PICO_TITLE, version);	/* write version */
+	snprintf(t1, sizeof(t1), igluno_TITLE, version);	/* write version */
 
 	bp = wp->w_bufp;
 	if(bp->b_fname[0])				/* File name? */
 	  snprintf(t2, sizeof(t2), "File: %s", bp->b_fname);
         else{
-	    strncpy(t2, PICO_NEWBUF_MSG, sizeof(t2));
+	    strncpy(t2, igluno_NEWBUF_MSG, sizeof(t2));
 	    t2[sizeof(t2)-1] = '\0';
 	}
 
 	if(bp->b_flag&BFCHG){				/* "MOD" if changed. */
-	    strncpy(t3, PICO_MOD_MSG, sizeof(t3));
+	    strncpy(t3, igluno_MOD_MSG, sizeof(t3));
 	    t3[sizeof(t3)-1] = '\0';
 	}
 	else
@@ -1339,14 +1339,14 @@ mlyesno(UCS *prompt, int dflt)
     COLOR_PAIR *lastc = NULL;
 
 #ifdef _WINDOWS
-    if (mswin_usedialog ())
+    if (mswin_usedialog ()) 
       switch (mswin_yesno (prompt)) {
 	default:
 	case 0:		return (ABORT);
 	case 1:		return (TRUE);
 	case 2:		return (FALSE);
       }
-#endif
+#endif  
 
     for(rv = 0; rv < 12; rv++){
 	menu_yesno[rv].name = NULL;
@@ -1371,9 +1371,9 @@ mlyesno(UCS *prompt, int dflt)
     buf[NLINE-1] = '\0';
     mlwrite(buf, NULL);
     if(Pmaster && Pmaster->colors && Pmaster->colors->prcp
-       && pico_is_good_colorpair(Pmaster->colors->prcp)){
-	lastc = pico_get_cur_color();
-	(void) pico_set_colorp(Pmaster->colors->prcp, PSC_NONE);
+       && igluno_is_good_colorpair(Pmaster->colors->prcp)){
+	lastc = igluno_get_cur_color();
+	(void) igluno_set_colorp(Pmaster->colors->prcp, PSC_NONE);
     }
     else
       (*term.t_rev)(1);
@@ -1417,7 +1417,7 @@ mlyesno(UCS *prompt, int dflt)
 		peeol();
 		term.t_mrow = 2;
 		if(lastc){
-		    (void) pico_set_colorp(lastc, PSC_NONE);
+		    (void) igluno_set_colorp(lastc, PSC_NONE);
 		    free_color_pair(&lastc);
 		}
 		else
@@ -1426,9 +1426,9 @@ mlyesno(UCS *prompt, int dflt)
 		wkeyhelp(menu_yesno);		/* paint generic menu */
 		mlwrite(buf, NULL);
 		if(Pmaster && Pmaster->colors && Pmaster->colors->prcp
-		   && pico_is_good_colorpair(Pmaster->colors->prcp)){
-		    lastc = pico_get_cur_color();
-		    (void) pico_set_colorp(Pmaster->colors->prcp, PSC_NONE);
+		   && igluno_is_good_colorpair(Pmaster->colors->prcp)){
+		    lastc = igluno_get_cur_color();
+		    (void) igluno_set_colorp(Pmaster->colors->prcp, PSC_NONE);
 		}
 		else
 		  (*term.t_rev)(1);
@@ -1448,7 +1448,7 @@ mlyesno(UCS *prompt, int dflt)
 	(*term.t_flush)();
 	if(rv != -1){
 	    if(lastc){
-		(void) pico_set_colorp(lastc, PSC_NONE);
+		(void) igluno_set_colorp(lastc, PSC_NONE);
 		free_color_pair(&lastc);
 	    }
 	    else
@@ -1585,7 +1585,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 	j = 0;
 	for(i = 0; extras && extras[i].name != NULL; ++i) {
 	    if(extras[i].label[0] != '\0') {
-		if((extras[i].key & CTRL) == CTRL)
+		if((extras[i].key & CTRL) == CTRL) 
 		  btn_list[j].ch = (extras[i].key & ~CTRL) - '@';
 		else
 		  btn_list[j].ch = extras[i].key;
@@ -1601,7 +1601,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 
 	btn_list[j].ch = -1;
 
-	return_val = mswin_dialog(prompt, buf, nbuf, ((flg&QDEFLT) > 0),
+	return_val = mswin_dialog(prompt, buf, nbuf, ((flg&QDEFLT) > 0), 
 			    FALSE, btn_list, NULL, 0);
 
 	if(return_val == 3)
@@ -1687,15 +1687,15 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
     dline.vbase = 0;
 
     b = &buf[(flg & QBOBUF) ? 0 : ucs4_strlen(buf)];
-
+    
     wkeyhelp(menu_mlreply);		/* paint generic menu */
 
     sgarbk = 1;				/* mark menu dirty */
 
     if(Pmaster && Pmaster->colors && Pmaster->colors->prcp
-       && pico_is_good_colorpair(Pmaster->colors->prcp)){
-	lastc = pico_get_cur_color();
-	(void) pico_set_colorp(Pmaster->colors->prcp, PSC_NONE);
+       && igluno_is_good_colorpair(Pmaster->colors->prcp)){
+	lastc = igluno_get_cur_color();
+	(void) igluno_set_colorp(Pmaster->colors->prcp, PSC_NONE);
     }
     else
       (*term.t_rev)(1);
@@ -1707,7 +1707,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 
 #ifdef	MOUSE
 	mouse_in_content(KEY_MOUSE, -1, -1, 0x5, 0);
-	register_mfunc(mouse_in_content,
+	register_mfunc(mouse_in_content, 
 		       term.t_nrow - term.t_mrow, plen,
 		       term.t_nrow - term.t_mrow, term.t_ncol-1);
 #endif
@@ -1767,7 +1767,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 		km_popped++;
 		term.t_mrow = 2;
 		if(lastc){
-		    (void) pico_set_colorp(lastc, PSC_NONE);
+		    (void) igluno_set_colorp(lastc, PSC_NONE);
 		    free_color_pair(&lastc);
 		}
 		else
@@ -1776,9 +1776,9 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 		wkeyhelp(menu_mlreply);		/* paint generic menu */
 		plen = mlwrite(prompt, NULL);		/* paint prompt */
 		if(Pmaster && Pmaster->colors && Pmaster->colors->prcp
-		   && pico_is_good_colorpair(Pmaster->colors->prcp)){
-		    lastc = pico_get_cur_color();
-		    (void) pico_set_colorp(Pmaster->colors->prcp, PSC_NONE);
+		   && igluno_is_good_colorpair(Pmaster->colors->prcp)){
+		    lastc = igluno_get_cur_color();
+		    (void) igluno_set_colorp(Pmaster->colors->prcp, PSC_NONE);
 		}
 		else
 		  (*term.t_rev)(1);
@@ -1867,7 +1867,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 	    continue;
 #endif
 
-	  default :
+	  default : 
 
 	    /* look for match in extra_v */
 	    for(i = 0; i < 12; i++)
@@ -1907,7 +1907,7 @@ mlreplyd(UCS *prompt, UCS *buf, int nbuf, int flg, EXTRAKEYS *extras)
 
 ret:
     if(lastc){
-	(void) pico_set_colorp(lastc, PSC_NONE);
+	(void) igluno_set_colorp(lastc, PSC_NONE);
 	free_color_pair(&lastc);
     }
     else
@@ -1954,7 +1954,7 @@ emlwrite(char *utf8message, EML *eml)
  *              the text.
  */
 void
-emlwrite_ucs4(UCS *message, EML *eml)
+emlwrite_ucs4(UCS *message, EML *eml) 
 {
     UCS  *bufp, *ap;
     int   width;
@@ -1962,7 +1962,7 @@ emlwrite_ucs4(UCS *message, EML *eml)
 
     mlerase();
 
-    if(!(message && *message) || term.t_nrow < 2)
+    if(!(message && *message) || term.t_nrow < 2)	
       return;    /* nothing to write or no space to write, bag it */
 
     bufp = message;
@@ -1970,7 +1970,7 @@ emlwrite_ucs4(UCS *message, EML *eml)
     width = ucs4_str_width(message);
 
     /*
-     * next, figure out where the to move the cursor so the message
+     * next, figure out where the to move the cursor so the message 
      * comes out centered
      */
     if((ap=ucs4_strchr(message, '%')) != NULL){
@@ -2004,9 +2004,9 @@ emlwrite_ucs4(UCS *message, EML *eml)
       movecursor(term.t_nrow-term.t_mrow, 0);
 
     if(Pmaster && Pmaster->colors && Pmaster->colors->stcp
-       && pico_is_good_colorpair(Pmaster->colors->stcp)){
-	lastc = pico_get_cur_color();
-	(void) pico_set_colorp(Pmaster->colors->stcp, PSC_NONE);
+       && igluno_is_good_colorpair(Pmaster->colors->stcp)){
+	lastc = igluno_get_cur_color();
+	(void) igluno_set_colorp(Pmaster->colors->stcp, PSC_NONE);
     }
     else
       (*term.t_rev)(1);
@@ -2053,7 +2053,7 @@ emlwrite_ucs4(UCS *message, EML *eml)
     pputs_utf8(" ]", 1);
 
     if(lastc){
-	(void) pico_set_colorp(lastc, PSC_NONE);
+	(void) igluno_set_colorp(lastc, PSC_NONE);
 	free_color_pair(&lastc);
     }
     else
@@ -2101,9 +2101,9 @@ mlwrite(UCS *fmt, void *arg)
     movecursor(ttrow, 0);
 
     if(Pmaster && Pmaster->colors && Pmaster->colors->prcp
-       && pico_is_good_colorpair(Pmaster->colors->prcp)){
-	lastc = pico_get_cur_color();
-	(void) pico_set_colorp(Pmaster->colors->prcp, PSC_NONE);
+       && igluno_is_good_colorpair(Pmaster->colors->prcp)){
+	lastc = igluno_get_cur_color();
+	(void) igluno_set_colorp(Pmaster->colors->prcp, PSC_NONE);
     }
     else
       (*term.t_rev)(1);
@@ -2157,7 +2157,7 @@ mlwrite(UCS *fmt, void *arg)
     movecursor(term.t_nrow - term.t_mrow, ret);
 
     if(lastc){
-	(void) pico_set_colorp(lastc, PSC_NONE);
+	(void) igluno_set_colorp(lastc, PSC_NONE);
 	free_color_pair(&lastc);
     }
     else
@@ -2317,7 +2317,7 @@ scrolldown(WINDOW *wp, int r, int n)
     o_scrolldown(r, n);
 
     for(i=l-n-1; i >=  0; i--){
-	vp1 = pscreen[r+i];
+	vp1 = pscreen[r+i]; 
 	vp2 = pscreen[r+i+n];
 	memcpy(vp2, vp1, term.t_ncol * sizeof(CELL));
     }
@@ -2359,7 +2359,7 @@ scrollup(WINDOW *wp, int r, int n)
 	    if(!((i < wp->w_ntrows-n)&&(r+i+n < wp->w_toprow+wp->w_ntrows)))
 	      break;
 	}
-	vp1 = pscreen[r+i+n];
+	vp1 = pscreen[r+i+n]; 
 	vp2 = pscreen[r+i];
 	memcpy(vp2, vp1, term.t_ncol * sizeof(CELL));
 	i++;
@@ -2434,10 +2434,10 @@ doton(int *r, unsigned *chs)
 
 
 /*
- * resize_pico - given new window dimensions, allocate new resources
+ * resize_igluno - given new window dimensions, allocate new resources
  */
 int
-resize_pico(int row, int col)
+resize_igluno(int row, int col)
 {
     int old_nrow, old_ncol;
     register int i;
@@ -2466,7 +2466,7 @@ resize_pico(int row, int col)
     else
       fillcol = term.t_ncol - 6;	       /* we control the fill column */
 
-    /*
+    /* 
      * free unused screen space ...
      */
     for(i=term.t_nrow+1; i <= old_nrow; ++i){
@@ -2474,7 +2474,7 @@ resize_pico(int row, int col)
 	free((char *) pscreen[i]);
     }
 
-    /*
+    /* 
      * realloc new space for screen ...
      */
     if((vscreen=(VIDEO **)realloc(vscreen,(term.t_nrow+1)*sizeof(VIDEO *))) == NULL){
@@ -2525,7 +2525,7 @@ resize_pico(int row, int col)
 	}
 	else{
 	    curwp->w_flag |= (WFHARD | WFMODE);
-	    pico_refresh(0, 1);                /* redraw whole enchilada. */
+	    igluno_refresh(0, 1);                /* redraw whole enchilada. */
 	    update();                          /* do it */
 	}
     }
@@ -2534,9 +2534,9 @@ resize_pico(int row, int col)
 }
 
 void
-redraw_pico_for_callback(void)
+redraw_igluno_for_callback(void)
 {
-    pico_refresh(0, 1);
+    igluno_refresh(0, 1);
     update();
 }
 
@@ -2549,20 +2549,20 @@ showCompTitle(void)
 {
     if(Pmaster){
 	UCS *bufp;
-	extern   UCS *pico_anchor;
+	extern   UCS *igluno_anchor;
 	COLOR_PAIR *lastc = NULL;
 
-	if((bufp = pico_anchor) == NULL)
+	if((bufp = igluno_anchor) == NULL)
 	  return;
-
+	
 	movecursor(COMPOSER_TITLE_LINE, 0);
 	if (Pmaster->colors && Pmaster->colors->tbcp &&
-	    pico_is_good_colorpair(Pmaster->colors->tbcp)){
-	  lastc = pico_get_cur_color();
-	  (void)pico_set_colorp(Pmaster->colors->tbcp, PSC_NONE);
+	    igluno_is_good_colorpair(Pmaster->colors->tbcp)){
+	  lastc = igluno_get_cur_color();
+	  (void)igluno_set_colorp(Pmaster->colors->tbcp, PSC_NONE);
 	}
 	else
-	  (*term.t_rev)(1);
+	  (*term.t_rev)(1);   
 
 	while (ttcol < term.t_ncol)
 	  if(*bufp != '\0')
@@ -2571,7 +2571,7 @@ showCompTitle(void)
 	    pputc(' ', 1);
 
 	if (lastc){
-	  (void)pico_set_colorp(lastc, PSC_NONE);
+	  (void)igluno_set_colorp(lastc, PSC_NONE);
 	  free_color_pair(&lastc);
 	}
 	else
@@ -2611,7 +2611,7 @@ nlforw(void)
 {
     register int  i = 0;
     register LINE *lp = curwp->w_linep;
-
+    
     while(lp != curwp->w_dotp){
 	lp = lforw(lp);
 	i++;
@@ -2745,7 +2745,7 @@ peeol(void)
 
 
 /*
- * pscr - return the character cell on the physical screen map on the
+ * pscr - return the character cell on the physical screen map on the 
  *        given line, l, and offset, o.
  */
 CELL *
@@ -2781,7 +2781,7 @@ pclear(int x, int y)
 
 
 /*
- * dumbroot - just get close
+ * dumbroot - just get close 
  */
 int
 dumbroot(int x, int b)
@@ -2794,7 +2794,7 @@ dumbroot(int x, int b)
 
 
 /*
- * dumblroot - just get close
+ * dumblroot - just get close 
  */
 int
 dumblroot(long x, int b)
@@ -2831,7 +2831,7 @@ pinsert(CELL c)
 
 	ww = wcellwidth((UCS) c.c);
 	ttcol += (ww >= 0 ? ww : 1);
-
+	
 	return(1);
     }
 
@@ -2875,7 +2875,7 @@ pdel(void)
 	    p[i].c = ' ';
 	    p[i].a = 0;
 	}
-
+	
 	return(1);
     }
 
@@ -2907,13 +2907,13 @@ wstripe(int line, int column, char *utf8pmt, int key)
       return;
 
     if (Pmaster && Pmaster->colors){
-      if(pico_is_good_colorpair(Pmaster->colors->klcp))
+      if(igluno_is_good_colorpair(Pmaster->colors->klcp))
         klcp = Pmaster->colors->klcp;
 
-      if(klcp && pico_is_good_colorpair(Pmaster->colors->kncp))
+      if(klcp && igluno_is_good_colorpair(Pmaster->colors->kncp))
         kncp = Pmaster->colors->kncp;
 
-      lastc = pico_get_cur_color();
+      lastc = igluno_get_cur_color();
     }
 
     ucs4pmt = utf8_to_ucs4_cpystr(utf8pmt);
@@ -2927,7 +2927,7 @@ wstripe(int line, int column, char *utf8pmt, int key)
 
 	if (pscr(line, i) == NULL)
 	  return;
-
+	
 	if(pscr(line, i)->c != ucs4pmt[j]){
 	    if(j >= 1 && ucs4pmt[j-1] == (UCS) key)
  	      j--;
@@ -2941,26 +2941,26 @@ wstripe(int line, int column, char *utf8pmt, int key)
     }
 
     movecursor(line, column+col);
-    if(klcp) (void)pico_set_colorp(klcp, PSC_NONE);
+    if(klcp) (void)igluno_set_colorp(klcp, PSC_NONE);
     u = &ucs4pmt[j];
     do{
 	if(*u == (UCS) key){
 	    u++;
 	    if(kncp)
-	      (void)pico_set_colorp(kncp, PSC_NONE);
+	      (void)igluno_set_colorp(kncp, PSC_NONE);
 	    else
 	      (void)(*term.t_rev)(1);
 
 	    pputc(*u, 1);
 	    if(kncp)
-	      (void)pico_set_colorp(klcp, PSC_NONE);
+	      (void)igluno_set_colorp(klcp, PSC_NONE);
 	    else
 	      (void)(*term.t_rev)(0);
 	}
 	else{
 	    pputc(*u, 0);
 	}
-    }
+    }    
     while(*++u != '\0');
 
     if(ucs4pmt)
@@ -2968,7 +2968,7 @@ wstripe(int line, int column, char *utf8pmt, int key)
 
     peeol();
     if (lastc){
-      (void)pico_set_colorp(lastc, PSC_NONE);
+      (void)igluno_set_colorp(lastc, PSC_NONE);
       free_color_pair(&lastc);
     }
     (*term.t_flush)();
@@ -2996,7 +2996,7 @@ wkeyhelp(KEYMENU *keymenu)
 #endif
 
 #ifdef _WINDOWS
-    pico_config_menu_items (keymenu);
+    igluno_config_menu_items (keymenu);
 #endif
 
     if(term.t_mrow == 0)
@@ -3012,7 +3012,7 @@ wkeyhelp(KEYMENU *keymenu)
       if(!(gmode&MDFKEY)){
 	  nspace[index] = (keymenu[index].name)
 			    ? utf8_width(keymenu[index].name) : 0;
-	  if(keymenu[index+6].name
+	  if(keymenu[index+6].name 
 	     && (n = utf8_width(keymenu[index+6].name)) > nspace[index])
 	    nspace[index] = n;
 
@@ -3068,9 +3068,9 @@ wkeyhelp(KEYMENU *keymenu)
 			     nbuf, invert_label,
 			     term.t_nrow - 1 + row, (slot * tspace),
 			     strlen(nbuf),
-			     (Pmaster && Pmaster->colors)
+			     (Pmaster && Pmaster->colors) 
 			       ? Pmaster->colors->kncp: NULL,
-			     (Pmaster && Pmaster->colors)
+			     (Pmaster && Pmaster->colors) 
 			       ? Pmaster->colors->klcp: NULL);
 #endif
 
@@ -3140,7 +3140,7 @@ vcellwidth_a_to_b(int row, int a, int b)
 {
     CELL *pstart, *pend;
     VIDEO *vp;
-
+  
     if(row < 0 || row > term.t_nrow)
       return 0;
 
@@ -3166,7 +3166,7 @@ pcellwidth_a_to_b(int row, int a, int b)
 {
     CELL *pstart, *pend;
     VIDEO *vp;
-
+  
     if(row < 0 || row > term.t_nrow)
       return 0;
 
@@ -3215,7 +3215,7 @@ index_from_col(int row, int col)
 #ifdef _WINDOWS
 
 void
-pico_config_menu_items (KEYMENU *keymenu)
+igluno_config_menu_items (KEYMENU *keymenu)
 {
     int		i;
     KEYMENU	*k;
@@ -3225,12 +3225,12 @@ pico_config_menu_items (KEYMENU *keymenu)
 
     /* keymenu's seem to be hardcoded at 12 entries. */
     for (i = 0, k = keymenu; i < 12; ++i, ++k) {
-	if (k->name != NULL && k->label != NULL &&
+	if (k->name != NULL && k->label != NULL && 
 		k->menuitem != KS_NONE) {
 
 	    if (k->name[0] == '^')
 		key = CTRL | k->name[1];
-	    else if (strcmp(k->name, "Ret") == 0)
+	    else if (strcmp(k->name, "Ret") == 0) 
 		key = '\r';
 	    else
 		key = k->name[0];
@@ -3245,7 +3245,7 @@ pico_config_menu_items (KEYMENU *keymenu)
  *
  * This is where curbp->b_linecnt is really managed.  With out this function
  * to count the number of lines when needed curbp->b_linecnt will never
- * really be correct.  BUT, this function is only compiled into the
+ * really be correct.  BUT, this function is only compiled into the 
  * windows version, so b_linecnt will only ever be right in the windows
  * version.  OK for now because that is the only version that
  * looks at b_linecnt.
@@ -3258,15 +3258,15 @@ update_scroll (void)
     LINE	*lp;
     static LINE *last_top_line = NULL;
     static long last_scroll_pos = -1;
-
-
+    
+    
     if (ComposerEditing) {
 	/* Editing header - don't allow scroll bars. */
 	mswin_setscrollrange (0, 0);
 	return(0);
     }
-
-
+	   
+	
     /*
      * Count the number of lines in the current bufer.  Done when:
      *
@@ -3282,7 +3282,7 @@ update_scroll (void)
        || last_scroll_pos == -1) {
 	scr_range = 0;
 	scr_pos = 0;
-	for (lp = lforw (curbp->b_linep); lp != curbp->b_linep;
+	for (lp = lforw (curbp->b_linep); lp != curbp->b_linep; 
 	     lp = lforw (lp)) {
 	    if (lp == curwp->w_linep)
               scr_pos = scr_range;

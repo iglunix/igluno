@@ -29,7 +29,7 @@ static char rcsid[] = "$Id: attach.c 1080 2008-06-11 17:21:24Z hubert@u.washingt
 int    ParseAttach(struct hdr_line **, int *, char *,
 		   size_t, char *, size_t, char *, size_t, int *);
 PATMT *NewAttach(char *, long, char *);
-void   ZotAttach(struct pico_atmt *);
+void   ZotAttach(struct igluno_atmt *);
 void   sinserts(UCS *, int, UCS *, int);
 int    AttachUpload(char *, size_t, char *, size_t);
 int    AttachCancel(char *);
@@ -110,14 +110,14 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 	    if(Pmaster){
 		VARS_TO_SAVE *saved_state;
 
-		saved_state = save_pico_state();
+		saved_state = save_igluno_state();
 		(*Pmaster->helper)(Pmaster->attach_help, _("Attach Help"), 1);
 		if(saved_state){
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		}
 
-		pico_refresh(FALSE, 1);
+		igluno_refresh(FALSE, 1);
 		update();
 		continue;
 	    }
@@ -179,7 +179,7 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 		    bfn[sizeof(bfn)-1] = '\0';
 		}
 
-		if(!pico_fncomplete(bfn, fname, sizeof(fn)-(fname-fn)))
+		if(!igluno_fncomplete(bfn, fname, sizeof(fn)-(fname-fn)))
 		  (*term.t_beep)();
 	    }
 	    else
@@ -253,7 +253,7 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 	      else{                           /* trouble */
 		*fn = '\0';
 		AttachCancel(fn);
-		pico_refresh(FALSE,1);
+		igluno_refresh(FALSE,1);
 		update();
 		emlwrite("\007File name too BIG, cannot select!", NULL);
 	        sleep(3);
@@ -264,7 +264,7 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 	    else{
 	      *fn = '\0';
 	      AttachCancel(fn);
-	      pico_refresh(FALSE, 1);
+	      igluno_refresh(FALSE, 1);
 	      update();
 	      emlwrite("\007File name too big, cannot select!", NULL);         
 	      sleep(3);
@@ -273,7 +273,7 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 	    /* fall thru to clean up the screen */
 
 	  case (CTRL|'L'):
-	    pico_refresh(FALSE, 1);
+	    igluno_refresh(FALSE, 1);
 	    update();
 	    continue;
 
@@ -296,7 +296,7 @@ AskAttach(char *cmnt, size_t cmntlen, LMLIST **lm)
 		if(upload){
 		    fixpath(fn, sizeof(fn));		/* names relative to ~ */
 		    status = AttachUpload(fn, sizeof(fn), sz, sizeof(sz));
-		    pico_refresh(FALSE, 1);
+		    igluno_refresh(FALSE, 1);
 		    update();
 		    if(!status){
 			i = 2;			/* keep prompting for file */
@@ -1325,7 +1325,7 @@ NewAttach(char *f, long l, char *c)
 	mlerase();
 	rv = (*Pmaster->showmsg)('x');
 	ttresize();
-	picosigs();
+	iglunosigs();
 	if(rv)			/* Did showmsg corrupt the screen? */
 	  PaintBody(0);		/* Yes, repaint it */
 

@@ -20,7 +20,7 @@ static char rcsid[] = "$Id: getkey.c 676 2007-08-20 19:46:37Z hubert@u.washingto
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -74,7 +74,7 @@ bail(void)
 
 
 #if	TYPEAH
-/*
+/* 
  * typahead - Check to see if any characters are already in the
  *	      keyboard buffer
  */
@@ -108,7 +108,7 @@ ReadyForKey(int timeout)
 
       case BAIL_OUT:
       case PANIC_NOW:
-	/*emlwrite("\007Problem reading from keyboard!", NULL);*/
+	emlwrite("\007Problem reading from keyboard!", NULL);
 	kill(getpid(), SIGHUP);	/* Bomb out (saving our work)! */
 	/* no return */
     }
@@ -133,17 +133,17 @@ GetKey(void)
     if(!ReadyForKey(FUDGE-5))
       return(NODATA);
 
-    /*switch(status = kbseq(simple_ttgetc, NULL, bail, input_cs, &ch)){
+    switch(status = kbseq(simple_ttgetc, NULL, bail, input_cs, &ch)){
       case 0: 	/* regular character */
-	/*break;
+	break;
 
       case KEY_DOUBLE_ESC:
 	/*
 	 * Special hack to get around comm devices eating control characters.
 	 */
-	/*if(!ReadyForKey(5))
+	if(!ReadyForKey(5))
 	  return(BADESC);		/* user typed ESC ESC, then stopped */
-	/*else
+	else
 	    switch(status = kbseq(simple_ttgetc, NULL, bail, input_cs, &ch)){
 	      case  KEY_UP		:
 	      case  KEY_DOWN		:
@@ -170,13 +170,13 @@ GetKey(void)
 		break;
 
 	      case 0: 	/* regular character */
-		/*break;
+		break;
 
 	      default:				/* punt the whole thing	*/
-		/*(*term.t_beep)();
+		(*term.t_beep)();
 		return(BADESC);
 		break;
-  }*/
+	    }
 
 	ch &= 0x7f;
 	if(isdigit((unsigned char)ch)){
@@ -208,9 +208,9 @@ GetKey(void)
 		    ? (CTRL | ch) : ((ch == ' ') ? (CTRL | '@') : ch));
 	}
 
-	/*break;*/
+	break;
 
-/*#ifdef MOUSE
+#ifdef MOUSE
       case KEY_XTERM_MOUSE:
 	{
 	    /*
@@ -219,7 +219,7 @@ GetKey(void)
 	     * handler, and then to the installed handler if there
 	     * is one...
 	     */
-	    /*static int    down = 0;
+	    static int    down = 0;
 	    int           x, y, button;
 	    unsigned long cmd;
 
@@ -230,22 +230,22 @@ GetKey(void)
 
 	    if(button == 0){
 		down = 1;
-		/*if(checkmouse(&cmd, 1, x, y))
-		  return((UCS) cmd);*/
-	    /*}
+		if(checkmouse(&cmd, 1, x, y))
+		  return((UCS) cmd);
+	    }
 	    else if(down && button == 3){
 		down = 0;
-		/*if(checkmouse(&cmd, 0, x, y))
-		  return((UCS) cmd);*/
-	    /*}
+		if(checkmouse(&cmd, 0, x, y))
+		  return((UCS) cmd);
+	    }
 
 	    return(NODATA);
 	}
 
-	break;*/
+	break;
 #endif /* MOUSE */
 
-      /*case  KEY_UP		:
+      case  KEY_UP		:
       case  KEY_DOWN		:
       case  KEY_RIGHT		:
       case  KEY_LEFT		:
@@ -265,10 +265,10 @@ GetKey(void)
       case F9  :
       case F10 :
       case F11 :
-      case F12 :*/
+      case F12 :
 	return(status);
 
-      /*case  CTRL_KEY_UP		:
+      case  CTRL_KEY_UP		:
 	return(CTRL | KEY_UP);
       case  CTRL_KEY_DOWN	:
 	return(CTRL | KEY_DOWN);
@@ -282,7 +282,7 @@ GetKey(void)
       case KEY_SWAL_UP:
       case KEY_SWAL_DOWN:
       case KEY_SWAL_LEFT:
-      case KEY_SWAL_RIGHT:*/
+      case KEY_SWAL_RIGHT:
 	do
 	  if(!ReadyForKey(2)){
 	      status = BADESC;
@@ -293,9 +293,9 @@ GetKey(void)
 	return((status == BADESC)
 		? status
 		: status - (KEY_SWAL_UP - KEY_UP));
-	/*break;*/
+	break;
 
-      /*case KEY_KERMIT:
+      case KEY_KERMIT:
 	do{
 	    cc = ch;
 	    if(!ReadyForKey(2))
@@ -304,17 +304,17 @@ GetKey(void)
 	      ch = (*term.t_getchar)(NODATA, NULL, bail) & 0x7f;
 	}while(cc != '\033' && ch != '\\');
 
-	ch = NODATA;*/
-	/*break;*/
-
-      /*case BADESC:
-	(*term.t_beep)();
-	return(status);*/
-
-  /*    default:				/* punt the whole thing	*/
-	/*(*term.t_beep)();
+	ch = NODATA;
 	break;
-}*/
+
+      case BADESC:
+	(*term.t_beep)();
+	return(status);
+
+      default:				/* punt the whole thing	*/
+	(*term.t_beep)();
+	break;
+    }
 
     if (ch >= 0x00 && ch <= 0x1F)       /* C0 control -> C-     */
       ch = CTRL | (ch+'@');
@@ -323,11 +323,11 @@ GetKey(void)
 }
 
 
-/*
- * kbseq - looks at an escape sequence coming from the keyboard and
+/* 
+ * kbseq - looks at an escape sequence coming from the keyboard and 
  *         compares it to a trie of known keyboard escape sequences, and
  *         returns the function bound to the escape sequence.
- *
+ * 
  *     Args: getcfunc     -- Function to get a single character from stdin,
  *                           called with the next two arguments to this
  *                           function as its arguments.
@@ -350,7 +350,7 @@ kbseq(int (*getcfunc)(int (*recorder)(int ), void (*bail_handler)(void )),
     int      first = 1;
     KBESC_T *current;
 
-    /*current = kbesc;*/
+    current = kbesc;
     if(current == NULL)				/* bag it */
       return(BADESC);
 
@@ -375,7 +375,7 @@ kbseq(int (*getcfunc)(int (*recorder)(int ), void (*bail_handler)(void )),
 		    for(;;){
 			remaining_octets = octets_so_far;
 			inputp = inputbuf;
-			/*ucs = mbtow(data, &inputp, &remaining_octets);*/
+			ucs = mbtow(data, &inputp, &remaining_octets);
 			switch(ucs){
 			  case CCONV_BADCHAR:
 			    /*
@@ -384,7 +384,7 @@ kbseq(int (*getcfunc)(int (*recorder)(int ), void (*bail_handler)(void )),
 			     * we need to.
 			     */
 			    return(BADESC);
-
+			  
 			  case CCONV_NEEDMORE:
 			    if(octets_so_far >= sizeof(inputbuf))
 			      return(BADESC);
@@ -442,7 +442,7 @@ kpinsert(char *kstr, int kval, int termcap_wins)
     if(!termcap_wins && *kstr != '\033')
       return;
 
-    /*temp = trail = kbesc;*/
+    temp = trail = kbesc;
     buf = kstr;
 
     for(;;){
@@ -452,10 +452,10 @@ kpinsert(char *kstr, int kval, int termcap_wins)
 	    temp->func = 0;
 	    temp->left = NULL;
 	    temp->down = NULL;
-	    /*if(kbesc == NULL)
+	    if(kbesc == NULL)
 	      kbesc = temp;
 	    else
-	      trail->down = temp;*/
+	      trail->down = temp;
 	}
 	else{				/* first entry */
 	    while((temp != NULL) && (temp->value != *buf)){
@@ -491,7 +491,7 @@ kpinsert(char *kstr, int kval, int termcap_wins)
 	    temp = temp->down;
 	}
     }
-
+    
     /*
      * Ignore attempt to overwrite longer sequences we are a prefix
      * of (down != NULL) and exact same sequence (func != 0).
@@ -519,7 +519,7 @@ kbdestroy(KBESC_T *kb)
     }
 }
 
-/*#else /* _WINDOWS */
+#else /* _WINDOWS */
 
 /*
  * Read in a key.
@@ -527,12 +527,12 @@ kbdestroy(KBESC_T *kb)
  * character set.  Resolves escape sequences and returns no-op if global
  * timeout value exceeded.
  */
-/*UCS
+UCS
 GetKey(void)
 {
     UCS			ch = 0;
     long		timein;
-
+    
 
     ch = NODATA;
     timein = time(0L);
@@ -540,25 +540,25 @@ GetKey(void)
     /*
      * Main character processing loop.
      */
-    /*while(!mswin_charavail()) {
+    while(!mswin_charavail()) {
 
 #ifdef MOUSE
 	/* Check Mouse.  If we get a mouse event, convert to char
 	 * event and return that. */
-	/*if (checkmouse (&ch,0,0,0)) {
+	if (checkmouse (&ch,0,0,0)) {
 	    curwp->w_flag |= WFHARD;
 	    return (ch);
 	}
-/*#endif /* MOUSE */
+#endif /* MOUSE */
 
 
 	/* Check Timeout. */
-	/*if(time(0L) >= timein+(FUDGE-10))
+	if(time(0L) >= timein+(FUDGE-10)) 
 	    return(NODATA);
     }
 
-
+    
     return (mswin_getc_fast());
-}*/
+}
 
-/*#endif /* _WINDOWS */
+#endif /* _WINDOWS */

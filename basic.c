@@ -65,7 +65,7 @@ backchar(int f, int n)
 		     *
 		     * if the editor returns anything except -1, the 
 		     * user requested something special, so let 
-		     * pico know...
+		     * igluno know...
 		     */
 		  return(HeaderEditor(2, 1));
 		else
@@ -89,7 +89,7 @@ backchar(int f, int n)
  * line pointer for dot changes.
  *
  * This routine does _not_ do the header editor checks. It is used by
- * backword() in pico\word.c which gets stuck in a loop trying to go
+ * backword() in igluno\word.c which gets stuck in a loop trying to go
  * back if you've jumped into a header.
  */
 int
@@ -255,7 +255,7 @@ backline(int f, int n)
 	if (lback(curwp->w_dotp) == curbp->b_linep)
 	  /*
 	   * if the editor returns anything except -1 then the user
-	   * has requested something special, so let pico know...
+	   * has requested something special, so let igluno know...
 	   */
 	  return(HeaderEditor(1, 1));
     }
@@ -560,7 +560,7 @@ scrollback(int n, int movedot)
 	if (lback(curwp->w_dotp) == curbp->b_linep){
 	    /*
 	     * if the editor returns anything except -1 then the user
-	     * has requested something special, so let pico know...
+	     * has requested something special, so let igluno know...
 	     */
 	    return(HeaderEditor(1, 1));
 	}

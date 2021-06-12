@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_FSYNC_INCLUDED
-#define PICO_OSDEP_FSYNC_INCLUDED
+#ifndef igluno_OSDEP_FSYNC_INCLUDED
+#define igluno_OSDEP_FSYNC_INCLUDED
 
 #ifndef	HAVE_FSYNC
 
@@ -27,4 +27,4 @@ int	our_fsync(int);
 
 #endif /* !HAVE_FSYNC */
 
-#endif /* PICO_OSDEP_FSYNC_INCLUDED */
+#endif /* igluno_OSDEP_FSYNC_INCLUDED */

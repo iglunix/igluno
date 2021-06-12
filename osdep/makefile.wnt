@@ -13,7 +13,7 @@
 
 #
 #
-# Makefile for WIN NT version of libpicoosd.lib
+# Makefile for WIN NT version of libiglunoosd.lib
 #
 #
 CC=cl
@@ -49,18 +49,18 @@ OFILES=	altedit.obj chkpoint.obj color.obj filesys.obj fsync.obj \
 	read.obj shell.obj signals.obj spell.obj terminal.obj truncate.obj \
 	tty.obj
 
-all:	libpicoosd.lib mswin.res
+all:	libiglunoosd.lib mswin.res
 
 .c.obj:
 	$(CC) -c $(CFLAGS) "$(MAKEDIR)"\$*.c
 
 $(OFILES):	$(HFILES)
 
-libpicoosd.lib:	$(OFILES)
-		$(RM) libpicoosd.lib || rem
-		$(LIBER) /out:libpicoosd.lib $(OFILES)
+libiglunoosd.lib:	$(OFILES)
+		$(RM) libiglunoosd.lib || rem
+		$(LIBER) /out:libiglunoosd.lib $(OFILES)
 
-mswin.res:  mswin.rc pico.ico mswinhnd.cur resource.h
+mswin.res:  mswin.rc igluno.ico mswinhnd.cur resource.h
 	$(RC) $(RCFLAGS) /fo mswin.res mswin.rc
 
 clean:

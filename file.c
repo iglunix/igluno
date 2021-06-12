@@ -212,7 +212,7 @@ insfile(int f, int n)
 		    dir[0] = '\0';
 		    fn = file_split(dir, sizeof(dir), fname, 0);
 
-		    if(!pico_fncomplete(dir, fn, sizeof(fname)-(fn-fname)))
+		    if(!igluno_fncomplete(dir, fn, sizeof(fname)-(fn-fname)))
 		      (*term.t_beep)();
 		}
 
@@ -287,7 +287,7 @@ insfile(int f, int n)
 		    else
 		      fname[0] = '\0';
 
-		    pico_refresh(FALSE, 1);
+		    igluno_refresh(FALSE, 1);
 		    if(s != 1){
 			update(); 		/* redraw on return */
 			continue;
@@ -311,7 +311,7 @@ insfile(int f, int n)
 		    tfname[0] = '\0';
 		    retval = (*Pmaster->upload)(tfname, sizeof(tfname), NULL);
 
-		    pico_refresh(FALSE, 1);
+		    igluno_refresh(FALSE, 1);
 		    update();
 
 		    if(retval){
@@ -333,19 +333,19 @@ insfile(int f, int n)
 		if(Pmaster){
 		    VARS_TO_SAVE *saved_state;
 
-		    saved_state = save_pico_state();
+		    saved_state = save_igluno_state();
 		    (*Pmaster->helper)(msg ? Pmaster->ins_m_help
 					   : Pmaster->ins_help,
 				       _("Help for Insert File"), 1);
 		    if(saved_state){
-			restore_pico_state(saved_state);
-			free_pico_state(saved_state);
+			restore_igluno_state(saved_state);
+			free_igluno_state(saved_state);
 		    }
 		}
 		else
-		  pico_help(inshelptext, _("Help for Insert File"), 1);
+		  igluno_help(inshelptext, _("Help for Insert File"), 1);
 	      case (CTRL|'L'):
-		pico_refresh(FALSE, 1);
+		igluno_refresh(FALSE, 1);
 		update();
 		continue;
 	      default:
@@ -650,7 +650,7 @@ filewrite(int f, int n)
 			dir[sizeof(dir)-1] = '\0';
 		    }
 
-		    if(!pico_fncomplete(dir, fn, sizeof(fname)-(fn-fname)))
+		    if(!igluno_fncomplete(dir, fn, sizeof(fname)-(fn-fname)))
 		      (*term.t_beep)();
 		}
 
@@ -720,7 +720,7 @@ filewrite(int f, int n)
 		  sleep(3);
 		}
 
-		pico_refresh(FALSE, 1);
+		igluno_refresh(FALSE, 1);
 		update();
 		if(s == 1)
 		  break;
@@ -728,9 +728,9 @@ filewrite(int f, int n)
 		  continue;
 
 	      case HELPCH:
-		pico_help(writehelp, "", 1);
+		igluno_help(writehelp, "", 1);
 	      case (CTRL|'L'):
-		pico_refresh(FALSE, 1);
+		igluno_refresh(FALSE, 1);
 		update();
 		continue;
 
@@ -1001,10 +1001,10 @@ ifile(char fname[])
 
 
 /*
- * pico_fncomplete - pico's function to complete the given file name
+ * igluno_fncomplete - igluno's function to complete the given file name
  */
 int
-pico_fncomplete(char *dirarg, char *fn, size_t fnlen)
+igluno_fncomplete(char *dirarg, char *fn, size_t fnlen)
 {
     char *p, *dlist, tmp[NLINE], dir[NLINE];
     int   n, i, match = -1;

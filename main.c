@@ -19,7 +19,7 @@ static char rcsid[] = "$Id: main.c 1019 2008-04-02 22:09:20Z hubert@u.washington
  * Program:	Main stand-alone Pine Composer routines
  *
  *
- * WEEMACS/PICO NOTES:
+ * WEEMACS/igluno NOTES:
  *
  * 08 Jan 92 - removed PINE defines to simplify compiling
  *
@@ -28,19 +28,19 @@ static char rcsid[] = "$Id: main.c 1019 2008-04-02 22:09:20Z hubert@u.washington
  */
 
 #include	"headers.h"
-/* #include	"../c-client/mail.h"
+#include	"../c-client/mail.h"
 #include	"../c-client/rfc822.h"
 #include	"../pith/osdep/collate.h"
 #include	"../pith/charconv/filesys.h"
 #include	"../pith/charconv/utf8.h"
-#include	"../pith/conf.h" */
+#include	"../pith/conf.h"
 
 
 /*
  * Useful internal prototypes
  */
 #ifdef	_WINDOWS
-int	pico_file_drop(int, int, char *);
+int	igluno_file_drop(int, int, char *);
 #endif
 
 /*
@@ -74,26 +74,26 @@ static UCS fkm[12][2] = {
 #endif
 };
 
-char *pico_args(int, char **, int *, int *, int *);
-void  pico_args_help(void);
-void  pico_vers_help(void);
-void  pico_display_args_err(char *, char **, int);
+char *igluno_args(int, char **, int *, int *, int *);
+void  igluno_args_help(void);
+void  igluno_vers_help(void);
+void  igluno_display_args_err(char *, char **, int);
 
 /* TRANSLATORS: An error message about an unknown flag (option)
    on the command line */
-char  args_pico_missing_flag[]  = N_("unknown flag \"%c\"");
+char  args_igluno_missing_flag[]  = N_("unknown flag \"%c\"");
 /* TRANSLATORS: error message about command line */
-char  args_pico_missing_arg[]   = N_("missing or empty argument to \"%c\" flag");
-char  args_pico_missing_num[]   = N_("non numeric argument for \"%c\" flag");
-char  args_pico_missing_color[] = N_("missing color for \"%s\" flag");
-char  args_pico_missing_charset[] = N_("missing character set for \"%s\" flag");
-char  args_pico_input_charset[] = N_("input character set \"%s\" is unsupported");
-char  args_pico_output_charset[] = N_("output character set \"%s\" is unsupported");
+char  args_igluno_missing_arg[]   = N_("missing or empty argument to \"%c\" flag");
+char  args_igluno_missing_num[]   = N_("non numeric argument for \"%c\" flag");
+char  args_igluno_missing_color[] = N_("missing color for \"%s\" flag");
+char  args_igluno_missing_charset[] = N_("missing character set for \"%s\" flag");
+char  args_igluno_input_charset[] = N_("input character set \"%s\" is unsupported");
+char  args_igluno_output_charset[] = N_("output character set \"%s\" is unsupported");
 
-char *args_pico_args[] = {
+char *args_igluno_args[] = {
 /* TRANSLATORS: little help printed out when incorrect arguments
-   are given to pico program. */
-N_("Possible Starting Arguments for Pico editor:"),
+   are given to igluno program. */
+N_("Possible Starting Arguments for igluno editor:"),
 "",
 N_("\tArgument\t\tMeaning"),
 N_("\t -e \t\tComplete - allow file name completion"),
@@ -132,8 +132,8 @@ N_("\t -crb color \treverse background color"),
 N_("\t +[line#] \tLine - start on line# line, default=1"),
 N_("\t -v \t\tView - view file"),
 N_("\t -no_setlocale_collate\tdo not do setlocale(LC_COLLATE)"),
-N_("\t -version\tPico version number"),
-"",
+N_("\t -version\tigluno version number"),
+"", 
 N_("\t All arguments may be followed by a file name to display."),
 "",
 NULL
@@ -141,7 +141,7 @@ NULL
 
 
 /*
- * main standalone pico routine
+ * main standalone igluno routine
  */
 #ifdef _WINDOWS
 int
@@ -166,57 +166,44 @@ main(int argc, char *argv[])
     char    *err = NULL;
 
     set_input_timeout(600);
-    /* Pmaster = NULL; */
-    /* km_popped = 0; */
+    Pmaster = NULL;     		/* turn OFF composer functionality */
+    km_popped = 0;
 
     /*
      * Read command line flags before initializing, otherwise, we never
      * know to init for f_keys...
      */
-    file_to_edit = pico_args(argc, argv, &starton, &viewflag, &setlocale_collate);
+    file_to_edit = igluno_args(argc, argv, &starton, &viewflag, &setlocale_collate);
 
-    /* set_collation(setlocale_collate, 1); */
+    set_collation(setlocale_collate, 1);
 
 #define cpstr(s) strcpy((char *)fs_get(1+strlen(s)), s)
 
-#ifdef	_WINDOWS
+#ifdef	_WINDOWS	
     init_utf8_display(1, NULL);
 #else	/* UNIX */
 
 
-    /* if(display_character_set)
+    if(display_character_set)
       display_charmap = cpstr(display_character_set);
 #if   HAVE_LANGINFO_H && defined(CODESET)
     else
-      display_charmap = cpstr(nl_langinfo_codeset_wrapper()); */
+      display_charmap = cpstr(nl_langinfo_codeset_wrapper());
 #endif
 
     if(!display_charmap)
       display_charmap = cpstr("US-ASCII");
 
-    /* if(keyboard_character_set)
+    if(keyboard_character_set)
       keyboard_charmap = cpstr(keyboard_character_set);
     else
-      keyboard_charmap = cpstr(display_charmap); */
+      keyboard_charmap = cpstr(display_charmap);
 
 
-    /* if(use_system_translation){
+    if(use_system_translation){
 #if	PREREQ_FOR_SYS_TRANSLATION
 	use_system++;
-
-	if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
-				  &input_cs, &err) == -1){
-	    fprintf(stderr, "%s\n", err ? err : "trouble with character set");
-	    exit(1);
-	}
-	else if(err){
-	    fprintf(stderr, "%s\n", err);
-	    fs_give((void **) &err);
-	} */
-/* #endif
-} */
-
-    /* if(!use_system){
+	/* This modifies its arguments */
 	if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
 				  &input_cs, &err) == -1){
 	    fprintf(stderr, "%s\n", err ? err : "trouble with character set");
@@ -226,29 +213,42 @@ main(int argc, char *argv[])
 	    fprintf(stderr, "%s\n", err);
 	    fs_give((void **) &err);
 	}
-} */
+#endif
+    }
+
+    if(!use_system){
+	if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
+				  &input_cs, &err) == -1){
+	    fprintf(stderr, "%s\n", err ? err : "trouble with character set");
+	    exit(1);
+	}
+	else if(err){
+	    fprintf(stderr, "%s\n", err);
+	    fs_give((void **) &err);
+	}
+    }
 
     if(keyboard_charmap){
 	set_locale_charmap(keyboard_charmap);
 	free((void *) keyboard_charmap);
     }
 
-    /* if(display_charmap)
+    if(display_charmap)
       free((void *) display_charmap);
 
-#endif */	/* UNIX */
+#endif	/* UNIX */
 
     /*
      * There are a couple arguments that we need to be sure
      * are converted for internal use.
      */
-    /* if(alt_speller)
+    if(alt_speller)
       alt_speller = cpstr(fname_to_utf8(alt_speller));
 
     if(opertree && opertree[0]){
 	strncpy(opertree, fname_to_utf8(opertree), sizeof(opertree));
 	opertree[sizeof(opertree)-1] = '\0';
-}
+    }
 
     if(glo_quote_str_orig)
       glo_quote_str = utf8_to_ucs4_cpystr(fname_to_utf8(glo_quote_str_orig));
@@ -257,7 +257,7 @@ main(int argc, char *argv[])
       glo_wordseps = utf8_to_ucs4_cpystr(fname_to_utf8(glo_wordseps_orig));
 
     if(file_to_edit)
-      file_to_edit = cpstr(fname_to_utf8(file_to_edit)); */
+      file_to_edit = cpstr(fname_to_utf8(file_to_edit));
 
 #undef cpstr
 
@@ -274,22 +274,22 @@ main(int argc, char *argv[])
     }
 #endif
 
-    /* if(!vtinit())
+    if(!vtinit())			/* Displays.            */
 	exit(1);
 
-    strncpy(bname, "main", sizeof(bname));
+    strncpy(bname, "main", sizeof(bname));		/* default buffer name */
     bname[sizeof(bname)-1] = '\0';
-    edinit(bname);
+    edinit(bname);			/* Buffers, windows.   */
 
-    update(); */
+    update();				/* let the user know we are here */
 
 #ifdef	_WINDOWS
     mswin_setwindow(NULL, NULL, NULL, NULL, NULL, NULL);
     mswin_showwindow();
     mswin_showcaret(1);			/* turn on for main window */
     mswin_allowpaste(MSWIN_PASTE_FULL);
-    mswin_setclosetext("Use the ^X command to exit Pico.");
-    mswin_setscrollcallback (pico_scroll_callback);
+    mswin_setclosetext("Use the ^X command to exit igluno.");
+    mswin_setscrollcallback (igluno_scroll_callback);
 #endif
 
 #if	defined(USE_TERMCAP) || defined(USE_TERMINFO) || defined(VMS)
@@ -301,9 +301,9 @@ main(int argc, char *argv[])
 
     if(file_to_edit){			/* Any file to edit? */
 
-	/*makename(bname, file_to_edit);*/	/* set up a buffer for this file */
+	makename(bname, file_to_edit);	/* set up a buffer for this file */
 
-	/* bp = curbp;
+	bp = curbp;			/* read in first file */
 	makename(bname, file_to_edit);
 	strncpy(bp->b_bname, bname, sizeof(bp->b_bname));
 	bp->b_bname[sizeof(bp->b_bname)-1] = '\0';
@@ -327,8 +327,8 @@ main(int argc, char *argv[])
 		}
 
 		file_to_edit = NULL;
-  }
-} */
+	    }
+	}
 
 	if(!file_to_edit){
 	    strncpy(bp->b_bname, "main", sizeof(bp->b_bname));
@@ -345,62 +345,64 @@ main(int argc, char *argv[])
     }
 
     /* setup to process commands */
-    /* lastflag = 0;
-    curbp->b_mode |= gmode;
+    lastflag = 0;			/* Fake last flags.     */
+    curbp->b_mode |= gmode;		/* and set default modes*/
 
-    curwp->w_flag |= WFMODE;		*/
+    curwp->w_flag |= WFMODE;		/* and force an update	*/
 
-    /* if(timeoutset){
+    if(timeoutset){
 	EML eml;
 
 	eml.s = comatose(get_input_timeout());
 	emlwrite(_("Checking for new mail every %s seconds"), &eml);
-} */
+    }
 
 
-    /* forwline(0, starton - 1);	 */
+    forwline(0, starton - 1);		/* move dot to specified line */
 
     while(1){
 
-	/* if(km_popped){
+	if(km_popped){
 	    km_popped--;
-	    if(km_popped == 0)
+	    if(km_popped == 0) /* cause bottom three lines to be repainted */
 	      curwp->w_flag |= WFHARD;
-	} */
+	}
 
-	/* if(km_popped){
+	if(km_popped){  /* temporarily change to cause menu to be painted */
 	    term.t_mrow = 2;
 	    curwp->w_ntrows -= 2;
 	    curwp->w_flag |= WFMODE;
-	    movecursor(term.t_nrow-2, 0);
+	    movecursor(term.t_nrow-2, 0); /* clear status line, too */
 	    peeol();
 	}
 
-	update();
+	update();			/* Fix up the screen    */
 	if(km_popped){
 	    term.t_mrow = 0;
 	    curwp->w_ntrows += 2;
-	} */
+	}
 
 #ifdef	MOUSE
-/* #ifdef  EX_MOUSE
-	register_mfunc(mouse_in_pico, 2, 0, term.t_nrow - (term.t_mrow + 1),
+#ifdef  EX_MOUSE
+	/* New mouse function for real mouse text seletion. */
+	register_mfunc(mouse_in_igluno, 2, 0, term.t_nrow - (term.t_mrow + 1),
 		       term.t_ncol);
 #else
 	mouse_in_content(KEY_MOUSE, -1, -1, 0, 0);
 	register_mfunc(mouse_in_content, 2, 0, term.t_nrow - (term.t_mrow + 1),
-		       term.t_ncol); */
+		       term.t_ncol);
+#endif
 #endif
 #ifdef	_WINDOWS
-	mswin_setdndcallback (pico_file_drop);
-	mswin_mousetrackcallback(pico_cursor);
+	mswin_setdndcallback (igluno_file_drop);
+	mswin_mousetrackcallback(igluno_cursor);
 #endif
 	c = GetKey();
 #ifdef	MOUSE
 #ifdef  EX_MOUSE
-	clear_mfunc(mouse_in_pico);
-/* #else
-	clear_mfunc(mouse_in_content); */
+	clear_mfunc(mouse_in_igluno);
+#else
+	clear_mfunc(mouse_in_content);
 #endif
 #endif
 #ifdef	_WINDOWS
@@ -408,39 +410,40 @@ main(int argc, char *argv[])
 	mswin_mousetrackcallback(NULL);
 #endif
 
-	/* if(timeoutset && (c == NODATA || time_to_check())){
-	    if(pico_new_mail())
+	if(timeoutset && (c == NODATA || time_to_check())){
+	    if(igluno_new_mail())
 	      emlwrite(_("You may possibly have new mail."), NULL);
-	} */
+	}
 
-	/* if(km_popped)
+	if(km_popped)
 	  switch(c){
 	    case NODATA:
 	    case (CTRL|'L'):
 	      km_popped++;
 	      break;
-
+	    
 	    default:
+	      /* clear bottom three lines */
 	      mlerase();
 	      break;
-	  } */
+	  }
 
 	if(c == NODATA)
 	  continue;
 
-	/* if(mpresf){
+	if(mpresf){			/* erase message line? */
 	    if(mpresf++ > MESSDELAY)
 	      mlerase();
-	} */
+	}
 
 	f = FALSE;
 	n = 1;
 
-/* #ifdef	MOUSE
+#ifdef	MOUSE
 	clear_mfunc(mouse_in_content);
 #endif
-
-	execute(normalize_cmd(c, fkm, 1), f, n); */
+					/* Do it.               */
+	execute(normalize_cmd(c, fkm, 1), f, n);
     }
 }
 
@@ -459,11 +462,11 @@ main(int argc, char *argv[])
  *       returns the name of any file to open, else NULL
  */
 char *
-pico_args(int ac, char **av, int *starton, int *viewflag, int *setlocale_collate)
+igluno_args(int ac, char **av, int *starton, int *viewflag, int *setlocale_collate)
 {
     int   c, usage = 0;
     char *str;
-    char  tmp_1k_buf[1000];     /* tmp buf to contain err msgs  */
+    char  tmp_1k_buf[1000];     /* tmp buf to contain err msgs  */ 
 
 Loop:
     /* while more arguments with leading - or + */
@@ -474,15 +477,15 @@ Loop:
 	else if(--ac)
 	  str = *++av;
 	else{
-	  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_arg), '+');
-	  pico_display_args_err(tmp_1k_buf, NULL, 1);
+	  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_arg), '+');
+	  igluno_display_args_err(tmp_1k_buf, NULL, 1);
 	  usage++;
 	  goto Loop;
 	}
 
 	if(!isdigit((unsigned char)str[0])){
-	  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_num), '+');
-	  pico_display_args_err(tmp_1k_buf, NULL, 1);
+	  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_num), '+');
+	  igluno_display_args_err(tmp_1k_buf, NULL, 1);
 	  usage++;
 	}
 
@@ -491,12 +494,12 @@ Loop:
 
 	goto Loop;
       }
-
+      
       /* while more chars in this argument */
       else while(*++*av){
 
 	if(strcmp(*av, "version") == 0){
-	    pico_vers_help();
+	    igluno_vers_help();
 	}
 	else if(strcmp(*av, "no_setlocale_collate") == 0){
 	    *setlocale_collate = 0;
@@ -504,7 +507,7 @@ Loop:
 	}
 #ifndef	_WINDOWS
 	else if(strcmp(*av, "syscs") == 0){
-	    /* use_system_translation = !use_system_translation; */
+	    use_system_translation = !use_system_translation;
 	    goto Loop;
 	}
 #endif	/* ! _WINDOWS */
@@ -520,20 +523,20 @@ Loop:
 		str = *++av;
 		if(cmd[1] == 'n'){
 		    if(cmd[2] == 'f')
-		      pico_nfcolor(str);
+		      igluno_nfcolor(str);
 		    else if(cmd[2] == 'b')
-		      pico_nbcolor(str);
+		      igluno_nbcolor(str);
 		}
 		else if(cmd[1] == 'r'){
 		    if(cmd[2] == 'f')
-		      pico_rfcolor(str);
+		      igluno_rfcolor(str);
 		    else if(cmd[2] == 'b')
-		      pico_rbcolor(str);
+		      igluno_rbcolor(str);
 		}
 	    }
 	    else{
-		snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_color), cmd);
-		pico_display_args_err(tmp_1k_buf, NULL, 1);
+		snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_color), cmd);
+		igluno_display_args_err(tmp_1k_buf, NULL, 1);
 	        usage++;
 	    }
 
@@ -544,29 +547,29 @@ Loop:
 	else if(strcmp(*av, "dcs") == 0 || strcmp(*av, "kcs") == 0){
 	    char *cmd = *av;
 
-	    /* if(--ac){
+	    if(--ac){
 		if(strcmp(*av, "dcs") == 0){
 		    display_character_set = *++av;
 		    if(!output_charset_is_supported(display_character_set)){
-			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_output_charset), display_character_set);
-			pico_display_args_err(tmp_1k_buf, NULL, 1);
+			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_output_charset), display_character_set);
+			igluno_display_args_err(tmp_1k_buf, NULL, 1);
 			usage++;
-    }
+		    }
 		}
 		else{
 		    keyboard_character_set = *++av;
 		    if(!input_charset_is_supported(keyboard_character_set)){
-			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_input_charset), keyboard_character_set);
-			pico_display_args_err(tmp_1k_buf, NULL, 1);
+			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_input_charset), keyboard_character_set);
+			igluno_display_args_err(tmp_1k_buf, NULL, 1);
 			usage++;
 		    }
 		}
 	    }
 	    else{
-		snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_charset), cmd);
-		pico_display_args_err(tmp_1k_buf, NULL, 1);
+		snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_charset), cmd);
+		igluno_display_args_err(tmp_1k_buf, NULL, 1);
 	        usage++;
-	    } */
+	    }
 
 	    goto Loop;
 	}
@@ -579,9 +582,9 @@ Loop:
 	  /*
 	   * These don't take arguments.
 	   */
-          /* case 'a':
-            gmode ^= MDDOTSOK;
-            break; */
+          case 'a':
+            gmode ^= MDDOTSOK;          /* show dot files */
+            break;
 	  case 'b':
 #ifdef notdef
     /*
@@ -593,53 +596,53 @@ Loop:
 	    gmode ^= MDREPLACE;  /* -b for replace string in where is command */
 #endif
 	    break;
-	  /* case 'd':
+	  case 'd':			/* -d for rebind delete key */
 	    bindtokey(0x7f, forwdel);
 	    break;
-	  case 'e':
+	  case 'e':			/* file name completion */
 	    gmode ^= MDCMPLT;
 	    break;
-	   case 'f':
+	  case 'f':			/* -f for function key use */
 	    gmode ^= MDFKEY;
 	    break;
-	  case 'g':
+	  case 'g':			/* show-cursor in file browser */
 	    gmode ^= MDSHOCUR;
-	    break; */
+	    break;
 	  case 'h':
 	    usage++;
 	    break;
-	  /* case 'j':
+	  case 'j':			/* allow "Goto" in file browser */
 	    gmode ^= MDGOTO;
 	    break;
-	   case 'k':
+	  case 'k':			/* kill from dot */
 	    gmode ^= MDDTKILL;
 	    break;
-	   case 'm':
+	  case 'm':			/* turn on mouse support */
 	    gmode ^= MDMOUSE;
 	    break;
 	  case 'p':
 	    preserve_start_stop = 1;
 	    break;
-	  case 'q':
+	  case 'q':			/* -q for termcap takes precedence */
 	    gmode ^= MDTCAPWINS;
 	    break;
-	  case 't':
+	  case 't':			/* special shutdown mode */
 	    gmode ^= MDTOOL;
 	    rebindfunc(wquit, quickexit);
-	    break; */
+	    break;
 	  case 'v':			/* -v for View File */
 	  case 'V':
 	    *viewflag = !*viewflag;
 	    break;			/* break back to inner-while */
-	  /* case 'w':
+	  case 'w':			/* -w turn off word wrap */
 	    gmode ^= MDWRAP;
 	    break;
-	  case 'x':
+	  case 'x':			/* suppress keyhelp */
 	    sup_keyhelp = !sup_keyhelp;
 	    break;
-	  case 'z':
+	  case 'z':			/* -z to suspend */
 	    gmode ^= MDSSPD;
-	    break; */
+	    break;
 
 	  /*
 	   * These do take arguments.
@@ -660,15 +663,15 @@ Loop:
 	      else if(c == 'n')
 		str = "180";
 	      else{
-		  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_arg), c);
-		  pico_display_args_err(tmp_1k_buf, NULL, 1);
+		  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_arg), c);
+		  igluno_display_args_err(tmp_1k_buf, NULL, 1);
 		  usage++;
 		  goto Loop;
 	      }
 	    }
 
 	    switch(c){
-	      /* case 's':
+	      case 's':
 	        alt_speller = str;
 		break;
 	      case 'o':
@@ -680,17 +683,18 @@ Loop:
 		break;
 	      case 'W':
 		glo_wordseps_orig = str;
-		break; */
+		break;
 
+	/* numeric args */
 	      case 'r':
 	      case 'n':
 		if(!isdigit((unsigned char)str[0])){
-		  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_num), c);
-		  pico_display_args_err(tmp_1k_buf, NULL, 1);
+		  snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_num), c);
+		  igluno_display_args_err(tmp_1k_buf, NULL, 1);
 		  usage++;
 		}
 
-		/* if(c == 'r'){
+		if(c == 'r'){
 		    if((userfillcol = atoi(str)) < 1)
 		      userfillcol = 72;
 		}
@@ -699,16 +703,16 @@ Loop:
 		    set_input_timeout(180);
 		    if(set_input_timeout(atoi(str)) < 30)
 		      set_input_timeout(180);
-		} */
-
+		}
+		
 		break;
 	    }
 
 	    goto Loop;
 
 	  default:			/* huh? */
-	    snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pico_missing_flag), c);
-	    pico_display_args_err(tmp_1k_buf, NULL, 1);
+	    snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_igluno_missing_flag), c);
+	    igluno_display_args_err(tmp_1k_buf, NULL, 1);
 	    usage++;
 	    break;
 	}
@@ -716,7 +720,7 @@ Loop:
     }
 
     if(usage)
-      pico_args_help();
+      igluno_args_help();
 
     /* return the first filename for editing */
     if(ac > 0)
@@ -731,7 +735,7 @@ Loop:
  *
  */
 int
-pico_file_drop(int x, int y, char *filename)
+igluno_file_drop(int x, int y, char *filename)
 {
     /*
      * if current buffer is unchanged
@@ -785,7 +789,7 @@ pico_file_drop(int x, int y, char *filename)
  Result: prints help messages
   ----------------------------------------------------------------------*/
 void
-pico_args_help(void)
+igluno_args_help(void)
 {
     char **a;
     char *pp[2];
@@ -794,9 +798,9 @@ pico_args_help(void)
 
     /**  print out possible starting arguments... **/
 
-    for(a=args_pico_args; a && *a; a++){
+    for(a=args_igluno_args; a && *a; a++){
 	pp[0] = _(*a);
-	pico_display_args_err(NULL, pp, 0);
+	igluno_display_args_err(NULL, pp, 0);
     }
 
     exit(1);
@@ -804,16 +808,16 @@ pico_args_help(void)
 
 
 void
-pico_vers_help(void)
+igluno_vers_help(void)
 {
     char v0[100];
     char *v[2];
 
-    /* snprintf(v0, sizeof(v0), "Pico %.50s", version); */
+    snprintf(v0, sizeof(v0), "igluno %.50s", version);
     v[0] = v0;
     v[1] = NULL;
 
-    pico_display_args_err(NULL, v, 0);
+    igluno_display_args_err(NULL, v, 0);
     exit(1);
 }
 
@@ -826,7 +830,7 @@ pico_vers_help(void)
  Result: prints help messages
   ----------------------------------------------------------------------*/
 void
-pico_display_args_err(char *s, char **a, int err)
+igluno_display_args_err(char *s, char **a, int err)
 {
     char  errstr[256], *errp;
     FILE *fp = err ? stderr : stdout;

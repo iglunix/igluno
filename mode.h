@@ -18,7 +18,7 @@
 
 
 /*
- * definitions for various PICO modes 
+ * definitions for various igluno modes 
  */
 #define	MDWRAP		0x00000001	/* word wrap			*/
 #define	MDSPELL		0x00000002	/* spell error parcing		*/
@@ -27,7 +27,7 @@
 #define MDFKEY		0x00000010	/* function key  mode		*/
 #define MDSCUR		0x00000020	/* secure (for demo) mode	*/
 #define MDSSPD		0x00000040	/* suspendable mode		*/
-#define MDADVN		0x00000080	/* Pico's advanced mode		*/
+#define MDADVN		0x00000080	/* igluno's advanced mode		*/
 #define MDTOOL		0x00000100	/* "tool" mode (quick exit)	*/
 #define MDBRONLY	0x00000200	/* indicates standalone browser	*/
 #define MDCURDIR	0x00000400	/* use current dir for lookups	*/

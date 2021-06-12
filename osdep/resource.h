@@ -119,7 +119,7 @@
 #define COMPOSERMENU                    301
 #define ALPINEICON                      400
 #define NEWMAILICON                     401
-#define PICOHAND                        402
+#define iglunoHAND                        402
 #define MCLOSEDICON                     403
 #define ALPINESPLASH                    501
 #define IDD_ABOUTICON                   0x210

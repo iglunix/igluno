@@ -22,7 +22,7 @@ static char rcsid[] = "$Id: tty.c 672 2007-08-15 23:07:18Z hubert@u.washington.e
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -43,61 +43,61 @@ static char rcsid[] = "$Id: tty.c 672 2007-08-15 23:07:18Z hubert@u.washington.e
 #include "tty.h"
 
 
-/*#ifndef _WINDOWS*/
+#ifndef _WINDOWS
 /*
- * ttopen - this function is called once to set up the terminal device
+ * ttopen - this function is called once to set up the terminal device 
  *          streams.  if called as pine composer, don't mess with
  *          tty modes, but set signal handlers.
  */
 int
 ttopen(void)
 {
-    /*if(Pmaster == NULL){
+    if(Pmaster == NULL){
 	Raw(1);
-#ifdef	MOUSE*/
-	/*if(gmode & MDMOUSE)
-	  init_mouse();*/
-/*#endif	/* MOUSE */
-	/*xonxoff_proc(preserve_start_stop);*/
+#ifdef	MOUSE
+	if(gmode & MDMOUSE)
+	  init_mouse();
+#endif	/* MOUSE */
+	xonxoff_proc(preserve_start_stop);
+    }
 
-
-    picosigs();
+    iglunosigs();
 
     return(1);
 }
 
 
 /*
- * ttclose - this function gets called just before we go back home to
+ * ttclose - this function gets called just before we go back home to 
  *           the command interpreter.  If called as pine composer, don't
- *           worry about modes, but set signals to default, pine will
+ *           worry about modes, but set signals to default, pine will 
  *           rewire things as needed.
  */
-/*int
+int
 ttclose(void)
 {
-    /*if(Pmaster){
-	signal(SIGHUP, SIG_DFL);*/
-/*#ifdef  SIGCONT
+    if(Pmaster){
+	signal(SIGHUP, SIG_DFL);
+#ifdef  SIGCONT
 	signal(SIGCONT, SIG_DFL);
 #endif
 #if	defined(SIGWINCH) && defined(TIOCGWINSZ)
 	signal(SIGWINCH, SIG_DFL);
 #endif
     }
-    /*else{
+    else{
 	Raw(0);
 #ifdef  MOUSE
 	end_mouse();
 #endif
-}*/
+    }
 
-    /*return(1);
-}*/
+    return(1);
+}
 
 
 /*
- * ttgetc - Read a character from the terminal, performing no editing
+ * ttgetc - Read a character from the terminal, performing no editing 
  *          and doing no echo at all.
  *
  * Args: return_on_intr     -- Function to get a single character from stdin,
@@ -160,7 +160,7 @@ simple_ttgetc(int (*recorder)(int), void (*bail_handler)(void))
 
 
 /*
- * ttputc - Write a character to the display.
+ * ttputc - Write a character to the display. 
  */
 int
 ttputc(UCS ucs)
@@ -172,7 +172,7 @@ ttputc(UCS ucs)
     if(ucs < 0x80)
       return(putchar((unsigned char) ucs));
 
-    /*width = wcellwidth(ucs);*/
+    width = wcellwidth(ucs);
 
     if(width < 0){
 	width = 1;
@@ -184,7 +184,7 @@ ttputc(UCS ucs)
 	 * character that corresponds to the
 	 * ucs in the users locale.
 	 */
-	/*outchars = wtomb((char *) obuf, ucs);*/
+	outchars = wtomb((char *) obuf, ucs);
 	if(outchars < 0){
 	    width = 1;
 	    obuf[0] = '?';
@@ -202,8 +202,8 @@ ttputc(UCS ucs)
 
 
 /*
- * ttflush - flush terminal buffer. Does real work where the terminal
- *           output is buffered up. A no-operation on systems where byte
+ * ttflush - flush terminal buffer. Does real work where the terminal 
+ *           output is buffered up. A no-operation on systems where byte 
  *           at a time terminal I/O is done.
  */
 int
@@ -215,7 +215,7 @@ ttflush(void)
 
 /*
  * ttresize - recompute the screen dimensions if necessary, and then
- *	      adjust pico's internal buffers accordingly.
+ *	      adjust igluno's internal buffers accordingly.
  */
 void
 ttresize(void)
@@ -223,7 +223,7 @@ ttresize(void)
     int row = -1, col = -1;
 
     ttgetwinsz(&row, &col);
-    /* resize_pico(row, col); */
+    resize_igluno(row, col);
 }
 
 
@@ -261,11 +261,11 @@ ttgetwinsz(int *row, int *col)
       *col = NLINE-1;
 }
 
-/*#else /* _WINDOWS */
+#else /* _WINDOWS */
 
-/* #define	MARGIN			8 */	/* size of minimim margin and	*/
-/* #define	SCRSIZ			64 */	/* scroll size for extended lines */
-/* #define	MROW			2 */	/* rows in menu */
+#define	MARGIN			8	/* size of minimim margin and	*/
+#define	SCRSIZ			64	/* scroll size for extended lines */
+#define	MROW			2	/* rows in menu */
 
 /* internal prototypes */
 int mswin_resize (int, int);
@@ -273,62 +273,62 @@ int mswin_resize (int, int);
 /*
  * Standard terminal interface dispatch table. Fields point to functions
  * that operate the terminal.  All these functions live in mswin.c, but
- * this structure is defined here because it is specific to pico.
+ * this structure is defined here because it is specific to igluno.
  */
-/*TERM    term    = {
+TERM    term    = {
         0,
         0,
-	/*MARGIN,
+	MARGIN,
 	MROW,
-        ttopen,*/
-        /*NULL,
-        /*ttclose,
-        NULL,		/* was mswin_getc, but not used?
-	mswin_putc,*/
-        /*mswin_flush,
-        mswin_move,*/
-        /*mswin_eeol,
+        ttopen,
+        NULL,
+        ttclose,
+        NULL,		/* was mswin_getc, but not used? */
+	mswin_putc,
+        mswin_flush,
+        mswin_move,
+        mswin_eeol,
         mswin_eeop,
         mswin_beep,
 	mswin_rev
-};*/
+};
 
 /*
  * This function is called once to set up the terminal device streams.
  */
 int
-/*ttopen(void)
+ttopen(void)
 {
     int rows, columns;
 
-
+    
     mswin_getscreensize (&rows, &columns);
     term.t_nrow = rows - 1;
     term.t_ncol = columns;
     /* term.t_scrsiz = (columns * 2) / 3; */
-
+    
     /*
      * Do we implement optimized character insertion and deletion?
      * o_insert() and o_delete()
      */
     /* inschar  = delchar = FALSE; */
     /* revexist = TRUE; dead code? */
-
-    /*mswin_setresizecallback (mswin_resize);
+    
+    mswin_setresizecallback (mswin_resize);
 
     init_mouse();
 
     return(1);
-}*/
+}
 
 /*
  * This function gets called just before we go back home to the command
  * interpreter.
  */
-/*int*/
+int
 ttclose(void)
 {
-    /*mswin_clearresizecallback (mswin_resize);*/
+    mswin_clearresizecallback (mswin_resize);
     return(1);
 }
 
@@ -336,36 +336,36 @@ ttclose(void)
  * Flush terminal buffer. Does real work where the terminal output is buffered
  * up. A no-operation on systems where byte at a time terminal I/O is done.
  */
-/*int
+int
 ttflush(void)
 {
     return(1);
-}*/
+}
 
 /*
  * ttresize - recompute the screen dimensions if necessary, and then
- *	      adjust pico's internal buffers accordingly.
+ *	      adjust igluno's internal buffers accordingly.
  */
-/*void
+void
 ttresize(void)
 {
     int row, col;
 
     mswin_getscreensize(&row, &col);
-    resize_pico (row-1, col);
-}*/
+    resize_igluno (row-1, col);
+}
 
 
 /*
- * mswin_resize - windows specific callback to set pico's internal tables
+ * mswin_resize - windows specific callback to set igluno's internal tables
  *		  to new screen dimensions.
  */
 int
 mswin_resize(int row, int col)
 {
-    /*if (wheadp)
-       /*resize_pico (row-1, col);
-    return (0);*/
+    if (wheadp)
+       resize_igluno (row-1, col);
+    return (0);
 }
 
-/*#endif /* _WINDOWS */
+#endif /* _WINDOWS */

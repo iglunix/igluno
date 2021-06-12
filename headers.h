@@ -22,8 +22,8 @@
  */
          
 
-#ifndef _PICO_HEADERS_INCLUDED
-#define _PICO_HEADERS_INCLUDED
+#ifndef _igluno_HEADERS_INCLUDED
+#define _igluno_HEADERS_INCLUDED
 
 
 #include <system.h>
@@ -40,7 +40,7 @@
 #endif /* _WINDOWS */
 #include "estruct.h"
 #include "mode.h"
-#include "pico.h"
+#include "igluno.h"
 #include "keydefs.h"
 #include "edef.h"
 #include "efunc.h"
@@ -64,4 +64,4 @@
 #include "osdep/tty.h"
 
 
-#endif /* _PICO_HEADERS_INCLUDED */
+#endif /* _igluno_HEADERS_INCLUDED */

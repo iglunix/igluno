@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_SIGNALS_INCLUDED
-#define PICO_OSDEP_SIGNALS_INCLUDED
+#ifndef igluno_OSDEP_SIGNALS_INCLUDED
+#define igluno_OSDEP_SIGNALS_INCLUDED
 
 
 /*
@@ -49,7 +49,7 @@
 
 
 /* exported prototypes */
-void		picosigs(void);
+void		iglunosigs(void);
 #if	defined(SIGWINCH) && defined(TIOCGWINSZ)
 RETSIGTYPE	winch_handler(int);
 #endif
@@ -59,4 +59,4 @@ void		(*posix_signal(int, RETSIGTYPE (*)()))(int);
 int		posix_sigunblock(int);
 #endif
 
-#endif /* PICO_OSDEP_SIGNALS_INCLUDED */
+#endif /* igluno_OSDEP_SIGNALS_INCLUDED */

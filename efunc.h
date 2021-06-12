@@ -12,7 +12,7 @@
  *
  * ========================================================================
  *
- * Program:	Pine's composer and pico's function declarations
+ * Program:	Pine's composer and igluno's function declarations
  */
 
 /*	EFUNC.H:	MicroEMACS function declarations and names
@@ -92,7 +92,7 @@ extern	int packbuf(char **, int *, int);
 extern	void readbuf(char **);
 
 /* composer.c */
-extern	int InitMailHeader(struct pico_struct *);
+extern	int InitMailHeader(struct igluno_struct *);
 extern	int ResizeHeader(void);
 extern	int HeaderEditor(int, int);
 extern	void PaintHeader(int, int);
@@ -107,9 +107,9 @@ extern	void ShowPrompt(void);
 extern	int packheader(void);
 extern	void zotheader(void);
 extern	void display_for_send(void);
-extern	VARS_TO_SAVE *save_pico_state(void);
-extern	void restore_pico_state(VARS_TO_SAVE *);
-extern	void free_pico_state(VARS_TO_SAVE *);
+extern	VARS_TO_SAVE *save_igluno_state(void);
+extern	void restore_igluno_state(VARS_TO_SAVE *);
+extern	void free_igluno_state(VARS_TO_SAVE *);
 extern	void HeaderPaintCursor(void);
 extern	void PaintBody(int);
 extern	int AppendAttachment(char *, char *, char *);
@@ -137,7 +137,7 @@ extern	void unknown_command(UCS);
 extern	void scrolldown(struct WINDOW *, int, int);
 extern	void scrollup(struct WINDOW *, int, int);
 extern	int doton(int *, unsigned int *);
-extern	int resize_pico(int, int);
+extern	int resize_igluno(int, int);
 extern	void zotdisplay(void);
 extern	void pputc(UCS c, int a);
 extern	void pputs(UCS *s, int a);
@@ -193,8 +193,8 @@ extern	REGION *get_last_region_added(void);
 extern	int o_insert(UCS);
 extern	int o_delete(void);
 
-/* pico.c */
-extern	int pico(struct pico_struct *pm);
+/* igluno.c */
+extern	int igluno(struct igluno_struct *pm);
 extern	void edinit(char *);
 extern	int execute(UCS c, int f, int n);
 extern	int quickexit(int, int);
@@ -203,11 +203,11 @@ extern	int suspend_composer(int, int);
 extern	int wquit(int, int);
 extern	int ctrlg(int, int);
 extern	int rdonly(void);
-extern	int pico_help(char **, char *, int);
+extern	int igluno_help(char **, char *, int);
 extern	void zotedit(void);
 #ifdef	_WINDOWS
 int	composer_file_drop(int, int, char *);
-int	pico_cursor(int, long);
+int	igluno_cursor(int, long);
 #endif
 
 /* random.c */
@@ -238,8 +238,8 @@ extern	int spell(int, int);
 #endif
 
 /* window.c */
-extern	int  pico_refresh(int, int);
-extern	void redraw_pico_for_callback(void);
+extern	int  igluno_refresh(int, int);
+extern	void redraw_igluno_for_callback(void);
 
 /* word.c */
 extern	int wrapword(void);

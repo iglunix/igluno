@@ -25,7 +25,7 @@ static char rcsid[] = "$Id: spell.c 848 2007-12-06 19:57:49Z hubert@u.washington
 /*
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -219,16 +219,16 @@ spell(int f, int n)
 		if(Pmaster){
 		    VARS_TO_SAVE *saved_state;
 
-		    saved_state = save_pico_state();
+		    saved_state = save_igluno_state();
 		    (*Pmaster->helper)(pinespellhelp, 
 				       _("Help with Spelling Checker"), 1);
 		    if(saved_state){
-			restore_pico_state(saved_state);
-			free_pico_state(saved_state);
+			restore_igluno_state(saved_state);
+			free_igluno_state(saved_state);
 		    }
 		}
 		else
-		  pico_help(spellhelp, _("Help with Spelling Checker"), 1);
+		  igluno_help(spellhelp, _("Help with Spelling Checker"), 1);
 
 	      case (CTRL|'L'):
 		next = 0;			/* don't get next word */

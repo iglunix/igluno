@@ -141,19 +141,19 @@ forwsearch(int f, int n)
 	    if(Pmaster){
 		VARS_TO_SAVE *saved_state;
 
-		saved_state = save_pico_state();
+		saved_state = save_igluno_state();
 		(*Pmaster->helper)(Pmaster->search_help,
 				   _("Help for Searching"), 1);
 		if(saved_state){
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		}
 	    }
 	    else
-	      pico_help(SearchHelpText, _("Help for Searching"), 1);
+	      igluno_help(SearchHelpText, _("Help for Searching"), 1);
 
 	  case (CTRL|'L'):			/* redraw requested */
-	    pico_refresh(FALSE, 1);
+	    igluno_refresh(FALSE, 1);
 	    update();
 	    break;
 
@@ -432,19 +432,19 @@ replace_pat(UCS *defpat, int *wrapt)
 	    if(Pmaster){
 		VARS_TO_SAVE *saved_state;
 
-		saved_state = save_pico_state();
+		saved_state = save_igluno_state();
 		(*Pmaster->helper)(Pmaster->search_help,
 				   _("Help for Searching"), 1);
 		if(saved_state){
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		}
 	    }
 	    else
-	      pico_help(SearchHelpText, _("Help for Searching"), 1);
+	      igluno_help(SearchHelpText, _("Help for Searching"), 1);
 
 	  case (CTRL|'L'):			/* redraw requested */
-	    pico_refresh(FALSE, 1);
+	    igluno_refresh(FALSE, 1);
 	    update();
 	    break;
 

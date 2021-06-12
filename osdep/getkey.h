@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_GETKEY_INCLUDED
-#define PICO_OSDEP_GETKEY_INCLUDED
+#ifndef igluno_OSDEP_GETKEY_INCLUDED
+#define igluno_OSDEP_GETKEY_INCLUDED
 
 
 #include <general.h>
@@ -33,4 +33,4 @@ UCS           kbseq(int (*getcfunc)(int (*recorder)(int ), void (*bail_handler)(
 void          kbdestroy(KBESC_T *);
 #endif
 
-#endif /* PICO_OSDEP_GETKEY_INCLUDED */
+#endif /* igluno_OSDEP_GETKEY_INCLUDED */

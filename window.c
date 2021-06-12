@@ -27,7 +27,7 @@ static char rcsid[] = "$Id: window.c 113 2006-09-01 21:54:31Z hubert@u.washingto
  * argument it recenters "." in the current window. Bound to "C-L".
  */
 int
-pico_refresh(int f, int n)
+igluno_refresh(int f, int n)
 {
     /*
      * since pine mode isn't using the traditional mode line, sgarbf isn't

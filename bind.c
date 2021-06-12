@@ -28,7 +28,7 @@ static char rcsid[] = "$Id: bind.c 855 2007-12-07 23:45:22Z hubert@u.washington.
 int arraylen(char **);
 
 /* 
- * help - help function for pico (UW pared down version of uemacs).
+ * help - help function for igluno (UW pared down version of uemacs).
  *	  this function will intentionally garbage with helpful 
  *	  tips and then wait for a ' ' to be hit to then update the 
  *        screen.
@@ -40,11 +40,11 @@ static char *helptext[] = {
        Leave the ~ characters where they are, they cause the following
        character to be printed in boldface as long as the first character
        of the line is also a ~. */
-    N_("        Pico Help Text"),
+    N_("        igluno Help Text"),
     " ",
-    N_("        Pico is designed to be a simple, easy-to-use text editor with a"),
+    N_("        igluno is designed to be a simple, easy-to-use text editor with a"),
     N_("        layout very similar to the Alpine mailer.  The status line at the"),
-    N_("        top of the display shows pico's version, the current file being"),
+    N_("        top of the display shows igluno's version, the current file being"),
     N_("        edited and whether or not there are outstanding modifications"),
     N_("        that have not been saved.  The third line from the bottom is used"),
     N_("        to report informational messages and for additional command input."),
@@ -52,12 +52,12 @@ static char *helptext[] = {
     " ",
     N_("        Each character typed is automatically inserted into the buffer"),
     N_("        at the current cursor position.  Editing commands and cursor"),
-    N_("        movement (besides arrow keys) are given to pico by typing"),
+    N_("        movement (besides arrow keys) are given to igluno by typing"),
     N_("        special control-key sequences.  A caret, '^', is used to denote"),
     N_("~        the control key, sometimes marked \"CTRL\", so the ~C~T~R~L~-~q key"),
     N_("~        combination is written as ~^~Q."),
     " ",
-    N_("        The following functions are available in pico (where applicable,"),
+    N_("        The following functions are available in igluno (where applicable,"),
     N_("        corresponding function key commands are in parentheses)."),
     " ",
     N_("~        ~^~G (~F~1)   Display this help text."),
@@ -93,7 +93,7 @@ static char *helptext[] = {
     " ",
     N_("~        ~^~R (~F~5)   Insert an external file at the current cursor position."),
     N_("~        ~^~O (~F~3)   Output the current buffer to a file, saving it."),
-    N_("~        ~^~X (~F~2)   Exit pico, saving buffer."),
+    N_("~        ~^~X (~F~2)   Exit igluno, saving buffer."),
     "    ",
     N_("    End of Help."),
     " ",
@@ -115,7 +115,7 @@ arraylen(char **array)
 
 
 /*
- * whelp - display help text for the composer and pico
+ * whelp - display help text for the composer and igluno
  */
 int
 whelp(int f, int n)
@@ -134,19 +134,19 @@ whelp(int f, int n)
     if(Pmaster){
 	VARS_TO_SAVE *saved_state;
 
-	saved_state = save_pico_state();
+	saved_state = save_igluno_state();
 	(*Pmaster->helper)(Pmaster->composer_help,
 			   Pmaster->headents
 			     ? _("Help for the Alpine Composer")
 			     : _("Help for Signature Editor"),
 			   1);
 	if(saved_state){
-	    restore_pico_state(saved_state);
-	    free_pico_state(saved_state);
+	    restore_igluno_state(saved_state);
+	    free_igluno_state(saved_state);
 	}
 
 	ttresize();
-	picosigs();			/* restore any altered handlers */
+	iglunosigs();			/* restore any altered handlers */
 	curwp->w_flag |= WFMODE;
 	if(km_popped)  /* this will unpop us */
 	  curwp->w_flag |= WFHARD;
@@ -160,8 +160,8 @@ whelp(int f, int n)
 	    term.t_mrow = 2;
 	}
 
-	/* TRANSLATORS: Pico is the name of a program */
-	pico_help(helptext, _("Help for Pico"), 1);
+	/* TRANSLATORS: igluno is the name of a program */
+	igluno_help(helptext, _("Help for igluno"), 1);
 	/* put it back the way it was */
 	if(mrow_was_zero)
 	  term.t_mrow = 0;
@@ -308,8 +308,8 @@ wscrollw(int begrow, int endrow, char *utf8textp[], int textlen)
 	        break;
 #ifdef notdef
     /*
-     * We don't handle window resize events correctly when in pico help.
-     * resize_pico() redraws the edit window instead of the help window.
+     * We don't handle window resize events correctly when in igluno help.
+     * resize_igluno() redraws the edit window instead of the help window.
      * A ^L will redraw the help text. What we'd like is something like
      * a KEY_RESIZE return from GetKey. If we had that we could exit
      * wscrollw with a FALSE return value and have that cause us to loop

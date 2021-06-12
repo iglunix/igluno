@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_COLOR_INCLUDED
-#define PICO_OSDEP_COLOR_INCLUDED
+#ifndef igluno_OSDEP_COLOR_INCLUDED
+#define igluno_OSDEP_COLOR_INCLUDED
 
 
 /* exported prototypes */
@@ -27,11 +27,11 @@ int	 StartBold(void);
 void	 EndBold(void);
 void	 StartUnderline(void);
 void	 EndUnderline(void);
-int      pico_trans_color(void);
-void	 pico_endcolor(void);
-void	 pico_toggle_color(int);
-void	 pico_set_nfg_color(void);
-void	 pico_set_nbg_color(void);
+int      igluno_trans_color(void);
+void	 igluno_endcolor(void);
+void	 igluno_toggle_color(int);
+void	 igluno_set_nfg_color(void);
+void	 igluno_set_nbg_color(void);
 
 
-#endif /* PICO_OSDEP_COLOR_INCLUDED */
+#endif /* igluno_OSDEP_COLOR_INCLUDED */

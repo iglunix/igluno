@@ -34,11 +34,11 @@ RETSIGTYPE	do_hup_signal(int);
 
 
 /*
- * picosigs - Install any handlers for the signals we're interested
+ * iglunosigs - Install any handlers for the signals we're interested
  *	      in catching.
  */
 void
-picosigs(void)
+iglunosigs(void)
 {
 #ifndef _WINDOWS
     signal(SIGHUP,  do_hup_signal);	/* deal with SIGHUP */
@@ -67,31 +67,31 @@ do_hup_signal(int sig)
     if(Pmaster){
 	extern jmp_buf finstate;
 
-	/*longjmp(finstate, COMP_GOTHUP);*/
+	longjmp(finstate, COMP_GOTHUP);
     }
     else{
 	/*
 	 * if we've been interrupted and the buffer is changed,
 	 * save it...
 	 */
-	/* if(anycb() == TRUE){
-	    if(curbp->b_fname[0] == '\0'){
-		strncpy(curbp->b_fname, "pico.save", sizeof(curbp->b_fname));
+	if(anycb() == TRUE){			/* time to save */
+	    if(curbp->b_fname[0] == '\0'){	/* name it */
+		strncpy(curbp->b_fname, "igluno.save", sizeof(curbp->b_fname));
 		curbp->b_fname[sizeof(curbp->b_fname)-1] = '\0';
 	    }
 	    else{
 		strncat(curbp->b_fname, ".save", sizeof(curbp->b_fname)-strlen(curbp->b_fname)-1);
 		curbp->b_fname[sizeof(curbp->b_fname)-1] = '\0';
-  }*/
+	    }
 
-	    /*our_unlink(curbp->b_fname);*/
-	    /*writeout(curbp->b_fname, TRUE);*/
+	    our_unlink(curbp->b_fname);
+	    writeout(curbp->b_fname, TRUE);
 	}
 
-	/*vttidy();*/
+	vttidy();
 	exit(1);
     }
-
+}
 #endif /* !_WINDOWS */
 
 
@@ -104,8 +104,8 @@ winch_handler(int sig)
 {
     signal(SIGWINCH, winch_handler);
     ttresize();
-    /*if(Pmaster && Pmaster->winch_cleanup && Pmaster->arm_winch_cleanup)
-      (*Pmaster->winch_cleanup)();*/
+    if(Pmaster && Pmaster->winch_cleanup && Pmaster->arm_winch_cleanup)
+      (*Pmaster->winch_cleanup)();
 }
 #endif	/* SIGWINCH and friends */
 
@@ -169,3 +169,4 @@ rename(char *oldname, char *newname)
     return(rtn);
 }
 #endif
+

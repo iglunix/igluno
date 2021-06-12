@@ -44,8 +44,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = pico$(EXEEXT) pilot$(EXEEXT)
-subdir = pico
+bin_PROGRAMS = igluno$(EXEEXT) pilot$(EXEEXT)
+subdir = igluno
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
@@ -61,22 +61,22 @@ CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
-libpico_a_AR = $(AR) $(ARFLAGS)
-libpico_a_LIBADD =
-am_libpico_a_OBJECTS = attach.$(OBJEXT) basic.$(OBJEXT) bind.$(OBJEXT) \
+libigluno_a_AR = $(AR) $(ARFLAGS)
+libigluno_a_LIBADD =
+am_libigluno_a_OBJECTS = attach.$(OBJEXT) basic.$(OBJEXT) bind.$(OBJEXT) \
 	browse.$(OBJEXT) buffer.$(OBJEXT) composer.$(OBJEXT) \
 	display.$(OBJEXT) file.$(OBJEXT) fileio.$(OBJEXT) \
-	line.$(OBJEXT) pico.$(OBJEXT) random.$(OBJEXT) \
+	line.$(OBJEXT) igluno.$(OBJEXT) random.$(OBJEXT) \
 	region.$(OBJEXT) search.$(OBJEXT) window.$(OBJEXT) \
 	word.$(OBJEXT)
-libpico_a_OBJECTS = $(am_libpico_a_OBJECTS)
+libigluno_a_OBJECTS = $(am_libigluno_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_pico_OBJECTS = main.$(OBJEXT) utf8stub.$(OBJEXT)
-pico_OBJECTS = $(am_pico_OBJECTS)
+am_igluno_OBJECTS = main.$(OBJEXT) utf8stub.$(OBJEXT)
+igluno_OBJECTS = $(am_igluno_OBJECTS)
 am__DEPENDENCIES_1 =
-pico_DEPENDENCIES = $(LDADD) $(am__DEPENDENCIES_1)
+igluno_DEPENDENCIES = $(LDADD) $(am__DEPENDENCIES_1)
 am_pilot_OBJECTS = pilot.$(OBJEXT) utf8stub.$(OBJEXT)
 pilot_OBJECTS = $(am_pilot_OBJECTS)
 pilot_DEPENDENCIES = $(LDADD) $(am__DEPENDENCIES_1)
@@ -92,8 +92,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libpico_a_SOURCES) $(pico_SOURCES) $(pilot_SOURCES)
-DIST_SOURCES = $(libpico_a_SOURCES) $(pico_SOURCES) $(pilot_SOURCES)
+SOURCES = $(libigluno_a_SOURCES) $(igluno_SOURCES) $(pilot_SOURCES)
+DIST_SOURCES = $(libigluno_a_SOURCES) $(igluno_SOURCES) $(pilot_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -255,17 +255,17 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = osdep
-pico_SOURCES = main.c utf8stub.c
+igluno_SOURCES = main.c utf8stub.c
 pilot_SOURCES = pilot.c utf8stub.c
-pico_LDADD = $(LDADD) $(INTLLIBS)
+igluno_LDADD = $(LDADD) $(INTLLIBS)
 pilot_LDADD = $(LDADD) $(INTLLIBS)
-LDADD = ../c-client/utf8.o libpico.a osdep/libpicoosd.a \
+LDADD = ../c-client/utf8.o libigluno.a osdep/libiglunoosd.a \
 	../pith/osdep/libpithosd.a ../pith/charconv/libpithcc.a
 
-noinst_LIBRARIES = libpico.a
-libpico_a_SOURCES = attach.c basic.c bind.c browse.c buffer.c composer.c display.c file.c \
-	fileio.c line.c pico.c random.c region.c search.c window.c word.c \
-	ebind.h edef.h efunc.h estruct.h headers.h keydefs.h mode.h pico.h
+noinst_LIBRARIES = libigluno.a
+libigluno_a_SOURCES = attach.c basic.c bind.c browse.c buffer.c composer.c display.c file.c \
+	fileio.c line.c igluno.c random.c region.c search.c window.c word.c \
+	ebind.h edef.h efunc.h estruct.h headers.h keydefs.h mode.h igluno.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 all: all-recursive
@@ -281,9 +281,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  pico/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  igluno/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  pico/Makefile
+	  $(AUTOMAKE) --foreign  igluno/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -304,10 +304,10 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libpico.a: $(libpico_a_OBJECTS) $(libpico_a_DEPENDENCIES) 
-	-rm -f libpico.a
-	$(libpico_a_AR) libpico.a $(libpico_a_OBJECTS) $(libpico_a_LIBADD)
-	$(RANLIB) libpico.a
+libigluno.a: $(libigluno_a_OBJECTS) $(libigluno_a_DEPENDENCIES) 
+	-rm -f libigluno.a
+	$(libigluno_a_AR) libigluno.a $(libigluno_a_OBJECTS) $(libigluno_a_LIBADD)
+	$(RANLIB) libigluno.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -336,9 +336,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-pico$(EXEEXT): $(pico_OBJECTS) $(pico_DEPENDENCIES) 
-	@rm -f pico$(EXEEXT)
-	$(LINK) $(pico_OBJECTS) $(pico_LDADD) $(LIBS)
+igluno$(EXEEXT): $(igluno_OBJECTS) $(igluno_DEPENDENCIES) 
+	@rm -f igluno$(EXEEXT)
+	$(LINK) $(igluno_OBJECTS) $(igluno_LDADD) $(LIBS)
 pilot$(EXEEXT): $(pilot_OBJECTS) $(pilot_DEPENDENCIES) 
 	@rm -f pilot$(EXEEXT)
 	$(LINK) $(pilot_OBJECTS) $(pilot_LDADD) $(LIBS)
@@ -360,7 +360,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pico.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/igluno.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pilot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/random.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/region.Po@am__quote@

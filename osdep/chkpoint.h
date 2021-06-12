@@ -13,12 +13,12 @@
  * ========================================================================
  */
 
-#ifndef PICO_OSDEP_CHKPOINT_INCLUDED
-#define PICO_OSDEP_CHKPOINT_INCLUDED
+#ifndef igluno_OSDEP_CHKPOINT_INCLUDED
+#define igluno_OSDEP_CHKPOINT_INCLUDED
 
 
 /* exported prototypes */
 void	chkptinit(char *, size_t);
 
 
-#endif /* PICO_OSDEP_CHKPOINT_INCLUDED */
+#endif /* igluno_OSDEP_CHKPOINT_INCLUDED */

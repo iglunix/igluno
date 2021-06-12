@@ -22,9 +22,9 @@ static char rcsid[] = "$Id: pilot.c 1019 2008-04-02 22:09:20Z hubert@u.washingto
  * BROWSER NOTES:
  *
  * 30 Sep 92 - Stand alone PIne's "Lister of Things" came into being.
- *	       It's built against libpico.a from a command line like:
+ *	       It's built against libigluno.a from a command line like:
  *
- *		       cc pilot.c libpico.a -ltermcap -lc -o pilot
+ *		       cc pilot.c libigluno.a -ltermcap -lc -o pilot
  *
  *	       should it become a fleshed out tool, we'll move it into
  *	       the normal build process.
@@ -87,7 +87,7 @@ N_("\t -crf color \treverse foreground color"),
 N_("\t -crb color \treverse background color"),
 #endif	/* _WINDOWS */
 N_("\t -no_setlocale_collate\tdo not do setlocale(LC_COLLATE)"),
-"",
+"", 
 N_("\t All arguments may be followed by a directory name to start in."),
 "",
 NULL
@@ -109,13 +109,13 @@ main(int argc, char *argv[])
     int   use_system = 0;
     char *err = NULL;
     int   setlocale_collate = 1;
-
+ 
     set_input_timeout(0);
-    /*Pmaster = NULL;			/* turn OFF composer functionality */
-    /*km_popped = 0;
-    opertree[0] = '\0'; opertree[NLINE] = '\0';*/
+    Pmaster = NULL;			/* turn OFF composer functionality */
+    km_popped = 0;
+    opertree[0] = '\0'; opertree[NLINE] = '\0';
     filename[0] ='\0';
-    /* gmode |= MDBRONLY;			/* turn on exclusive browser mode */
+    gmode |= MDBRONLY;			/* turn on exclusive browser mode */
 
     /*
      * Read command line flags before initializing, otherwise, we never
@@ -124,14 +124,14 @@ main(int argc, char *argv[])
     if((dir = pilot_args(argc, argv, &setlocale_collate)) != NULL){
 	strncpy(filedir, dir, sizeof(filedir));
 	filedir[sizeof(filedir)-1] = '\0';
-	/*fixpath(filedir, sizeof(filedir));*/
+	fixpath(filedir, sizeof(filedir));
     }
     else{
-      /*strncpy(filedir, gethomedir(NULL), sizeof(filedir));*/
+      strncpy(filedir, gethomedir(NULL), sizeof(filedir));
       filedir[sizeof(filedir)-1] = '\0';
     }
 
-    /*set_collation(setlocale_collate, 1);*/
+    set_collation(setlocale_collate, 1);
 
 #ifdef	_WINDOWS
     init_utf8_display(1, NULL);
@@ -139,28 +139,28 @@ main(int argc, char *argv[])
 
 #define cpstr(s) strcpy((char *)fs_get(1+strlen(s)), s)
 
-    /*if(display_character_set)
-      display_charmap = cpstr(display_character_set);*/
+    if(display_character_set)
+      display_charmap = cpstr(display_character_set);
 #if   HAVE_LANGINFO_H && defined(CODESET)
-    /*else
-      display_charmap = cpstr(nl_langinfo_codeset_wrapper());*/
+    else
+      display_charmap = cpstr(nl_langinfo_codeset_wrapper());
 #endif
 
     if(!display_charmap)
       display_charmap = cpstr("US-ASCII");
 
-    /*if(keyboard_character_set)
+    if(keyboard_character_set)
       keyboard_charmap = cpstr(keyboard_character_set);
     else
-      keyboard_charmap = cpstr(display_charmap);*/
+      keyboard_charmap = cpstr(display_charmap);
 
 #undef cpstr
 
-    /*if(use_system_translation){
+    if(use_system_translation){
 #if	PREREQ_FOR_SYS_TRANSLATION
 	use_system++;
 	/* This modifies its arguments */
-	/*if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
+	if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
 				  &input_cs, &err) == -1){
 	    fprintf(stderr, "%s\n", err ? err : "trouble with character set");
 	    exit(1);
@@ -170,10 +170,10 @@ main(int argc, char *argv[])
 	    fs_give((void **) &err);
 	}
 #endif
-}*/
+    }
 
     if(!use_system){
-	/*if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
+	if(setup_for_input_output(use_system, &display_charmap, &keyboard_charmap,
 				  &input_cs, &err) == -1){
 	    fprintf(stderr, "%s\n", err ? err : "trouble with character set");
 	    exit(1);
@@ -181,7 +181,7 @@ main(int argc, char *argv[])
 	else if(err){
 	    fprintf(stderr, "%s\n", err);
 	    fs_give((void **) &err);
-	}*/
+	}
     }
 
     if(keyboard_charmap){
@@ -194,12 +194,12 @@ main(int argc, char *argv[])
 
 #endif	/* UNIX */
 
-    /*if(!vtinit())			/* Displays.            */
-      /*exit(1);*/
+    if(!vtinit())			/* Displays.            */
+      exit(1);
 
     strncpy(bname, "main", sizeof(bname));		/* default buffer name */
     bname[sizeof(bname)-1] = '\0';
-    /*edinit(bname);*/			/* Buffers, windows.   */
+    edinit(bname);			/* Buffers, windows.   */
 #if	defined(USE_TERMCAP) || defined(USE_TERMINFO) || defined(VMS)
     if(kbesc == NULL){			/* will arrow keys work ? */
 	(*term.t_putchar)('\007');
@@ -207,18 +207,18 @@ main(int argc, char *argv[])
     }
 #endif	/* USE_TERMCAP/USE_TERMINFO/VMS */
 
-    /*curbp->b_mode |= gmode;*/		/* and set default modes*/
+    curbp->b_mode |= gmode;		/* and set default modes*/
     if(get_input_timeout()){
 	EML eml;
 
-	/*eml.s = comatose(get_input_timeout());
-	emlwrite(_("Checking for new mail every %s seconds"), &eml);*/
+	eml.s = comatose(get_input_timeout());
+	emlwrite(_("Checking for new mail every %s seconds"), &eml);
     }
 
 
-    /*set_browser_title(PILOT_VERSION);
-    FileBrowse(filedir, sizeof(filedir), filename, sizeof(filename), NULL, 0, 0, NULL);*/
-    /*wquit(1, 0);*/
+    set_browser_title(PILOT_VERSION);
+    FileBrowse(filedir, sizeof(filedir), filename, sizeof(filename), NULL, 0, 0, NULL);
+    wquit(1, 0);
     exit(0);
 }
 
@@ -239,7 +239,7 @@ pilot_args(int ac, char **av, int *setlocale_collate)
 {
     int   c, usage = 0;
     char *str;
-    char  tmp_1k_buf[1000];     /* tmp buf to contain err msgs  */
+    char  tmp_1k_buf[1000];     /* tmp buf to contain err msgs  */ 
 
 Loop:
     /* while more arguments with leading - */
@@ -251,12 +251,12 @@ Loop:
 	    *setlocale_collate = 0;
 	    goto Loop;
 	}
-/*#ifndef	_WINDOWS
+#ifndef	_WINDOWS
 	else if(strcmp(*av, "syscs") == 0){
 	    use_system_translation = !use_system_translation;
 	    goto Loop;
 	}
-#endif*/	/* ! _WINDOWS */
+#endif	/* ! _WINDOWS */
 #ifdef	_WINDOWS
 	if(strcmp(*av, "cnf") == 0
 	   || strcmp(*av, "cnb") == 0
@@ -269,15 +269,15 @@ Loop:
 		str = *++av;
 		if(cmd[1] == 'n'){
 		    if(cmd[2] == 'f')
-		      pico_nfcolor(str);
+		      igluno_nfcolor(str);
 		    else if(cmd[2] == 'b')
-		      pico_nbcolor(str);
+		      igluno_nbcolor(str);
 		}
 		else if(cmd[1] == 'r'){
 		    if(cmd[2] == 'f')
-		      pico_rfcolor(str);
+		      igluno_rfcolor(str);
 		    else if(cmd[2] == 'b')
-		      pico_rbcolor(str);
+		      igluno_rbcolor(str);
 		}
 	    }
 	    else{
@@ -295,21 +295,21 @@ Loop:
 
 	    if(--ac){
 		if(strcmp(*av, "dcs") == 0){
-		    /*display_character_set = *++av;
+		    display_character_set = *++av;
 		    if(!output_charset_is_supported(display_character_set)){
 			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pilot_output_charset), display_character_set);
 			pilot_display_args_err(tmp_1k_buf, NULL, 1);
 			usage++;
-    }*/
+		    }
 		}
-		/*else{
+		else{
 		    keyboard_character_set = *++av;
 		    if(!input_charset_is_supported(keyboard_character_set)){
 			snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pilot_input_charset), keyboard_character_set);
 			pilot_display_args_err(tmp_1k_buf, NULL, 1);
 			usage++;
 		    }
-		}*/
+		}
 	    }
 	    else{
 		snprintf(tmp_1k_buf, sizeof(tmp_1k_buf), _(args_pilot_missing_charset), cmd);
@@ -328,33 +328,33 @@ Loop:
 	  /*
 	   * These don't take arguments.
 	   */
-	  /* case 'a':
+	  case 'a':
 	    gmode ^= MDDOTSOK;		/* show dot files */
-	    /* break;
-	  /* case 'f':			/* -f for function key use */
-	    /* gmode ^= MDFKEY;
 	    break;
-	  /* case 'j':			/* allow "Goto" in file browser */
-	    /* gmode ^= MDGOTO;
-	    break;*/
-	  /* case 'g':			/* show-cursor in file browser */
-	    /* gmode ^= MDSHOCUR;
+	  case 'f':			/* -f for function key use */
+	    gmode ^= MDFKEY;
 	    break;
-	  /* case 'm':			/* turn on mouse support */
-	    /* gmode ^= MDMOUSE;
+	  case 'j':			/* allow "Goto" in file browser */
+	    gmode ^= MDGOTO;
 	    break;
-	  /* case 'v':			/* single column display */
-	    /* gmode ^= MDONECOL;
+	  case 'g':			/* show-cursor in file browser */
+	    gmode ^= MDSHOCUR;
+	    break;
+	  case 'm':			/* turn on mouse support */
+	    gmode ^= MDMOUSE;
+	    break;
+	  case 'v':			/* single column display */
+	    gmode ^= MDONECOL;
 	    break;			/* break back to inner-while */
-	  /* case 'x':			/* suppress keyhelp */
-	    /* sup_keyhelp = !sup_keyhelp;
+	  case 'x':			/* suppress keyhelp */
+	    sup_keyhelp = !sup_keyhelp;
 	    break;
-	  /* case 'q':			/* -q for termcap takes precedence */
-	    /* gmode ^= MDTCAPWINS;
-	    break; */
-	  /* case 'z':			/* -z to suspend */
-	    /* gmode ^= MDSSPD;
-	    break; */
+	  case 'q':			/* -q for termcap takes precedence */
+	    gmode ^= MDTCAPWINS;
+	    break;
+	  case 'z':			/* -z to suspend */
+	    gmode ^= MDSSPD;
+	    break;
 	  case 'h':
 	    usage++;
 	    break;
@@ -377,9 +377,9 @@ Loop:
 
 	    switch(c){
 	      case 'o':
-		/*strncpy(opertree, str, NLINE);
+		strncpy(opertree, str, NLINE);
 		gmode ^= MDTREE;
-		break;*/
+		break;
 
 	/* numeric args */
 	      case 'n':
@@ -390,10 +390,10 @@ Loop:
 		}
 
 		set_input_timeout(180);
-
+		
 		if(set_input_timeout(atoi(str)) < 30)
 		  set_input_timeout(180);
-
+		
 		break;
 	    }
 

@@ -21,7 +21,7 @@ static char rcsid[] = "$Id: shell.c 788 2007-11-06 23:51:13Z hubert@u.washington
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -76,9 +76,9 @@ bktoshell(int f, int n)
 	    mlerase();
 	    rv = (*Pmaster->showmsg)('x');
 	    ttresize();
-	    picosigs();
+	    iglunosigs();
 	    if(rv)		/* Did showmsg corrupt the display? */
-	      pico_refresh(0, 1);	/* Yes, repaint */
+	      igluno_refresh(0, 1);	/* Yes, repaint */
 
 	    mpresf = 1;
 	    if(km_popped){
@@ -89,7 +89,7 @@ bktoshell(int f, int n)
 	else{
 	    ttresize();
 	    pclear(0, term.t_nrow);
-	    pico_refresh(0, 1);
+	    igluno_refresh(0, 1);
 	}
 
 	return(TRUE);
@@ -165,6 +165,6 @@ rtfrmshell(int sig)
     ttopen();
     ttresize();
     pclear(0, term.t_nrow);
-    pico_refresh(0, 1);
+    igluno_refresh(0, 1);
 }
 #endif /* SIGCONT */

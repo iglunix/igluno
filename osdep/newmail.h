@@ -14,12 +14,12 @@
  */
 
 
-#ifndef PICO_OSDEP_NEWMAIL_INCLUDED
-#define PICO_OSDEP_NEWMAIL_INCLUDED
+#ifndef igluno_OSDEP_NEWMAIL_INCLUDED
+#define igluno_OSDEP_NEWMAIL_INCLUDED
 
 
 /* exported prototypes */
-int	pico_new_mail(void);
+int	igluno_new_mail(void);
 
 
-#endif /* PICO_OSDEP_NEWMAIL_INCLUDED */
+#endif /* igluno_OSDEP_NEWMAIL_INCLUDED */

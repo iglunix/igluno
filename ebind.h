@@ -16,9 +16,9 @@
  *
  * NOTES:
  *
- *	This files describes the key bindings for pico and the pine 
+ *	This files describes the key bindings for igluno and the pine 
  *      composer.  The binds are static, (i.e., no way for the user
- *      to change them) so as to keep pico/composer as simple to use
+ *      to change them) so as to keep igluno/composer as simple to use
  *      as possible.  This, of course, means the number of functions is
  *      greatly reduced, but, then again, this is seen as very desirable.
  *
@@ -75,7 +75,7 @@ KEYTAB  keytab[NBINDS] = {
 	{CTRL|'I',		tab},
 	{CTRL|'J',		fillpara},
 	{CTRL|'K',		killregion},
-	{CTRL|'L',		pico_refresh},
+	{CTRL|'L',		igluno_refresh},
 	{CTRL|'M',		newline},
 	{CTRL|'N',		forwline},
 	{CTRL|'O',		suspend_composer},
@@ -137,7 +137,7 @@ KEYTAB  pkeytab[NBINDS] = {
 	{CTRL|'I',		tab},
 	{CTRL|'J',		fillpara},
 	{CTRL|'K',		killregion},
-	{CTRL|'L',		pico_refresh},
+	{CTRL|'L',		igluno_refresh},
 	{CTRL|'M',		newline},
 	{CTRL|'N',		forwline},
 	{CTRL|'O',		filewrite},

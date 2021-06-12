@@ -33,7 +33,7 @@ extern int errno;
 
 
 
-FIOINFO	g_pico_fio;
+FIOINFO	g_igluno_fio;
 
 /*
  * Open a file for reading.
@@ -43,9 +43,9 @@ ffropen(char *fn)
 {
     int status;
 
-    if ((status = fexist(g_pico_fio.name = fn, "r", (off_t *)NULL)) == FIOSUC){
-	g_pico_fio.flags = FIOINFO_READ;
-	if((g_pico_fio.fp = our_fopen(g_pico_fio.name, "r")) == NULL)
+    if ((status = fexist(g_igluno_fio.name = fn, "r", (off_t *)NULL)) == FIOSUC){
+	g_igluno_fio.flags = FIOINFO_READ;
+	if((g_igluno_fio.fp = our_fopen(g_igluno_fio.name, "r")) == NULL)
 	  status = FIOFNF;
     }
 
@@ -65,13 +65,13 @@ ffputline(CELL buf[], int nbuf)
     EML eml;
 
     for(i = 0; i < nbuf; ++i)
-       if(write_a_wide_char((UCS) buf[i].c, g_pico_fio.fp) == EOF)
+       if(write_a_wide_char((UCS) buf[i].c, g_igluno_fio.fp) == EOF)
 	 break;
 
    if(i == nbuf)
-     write_a_wide_char((UCS) '\n', g_pico_fio.fp);
+     write_a_wide_char((UCS) '\n', g_igluno_fio.fp);
 
-    if(ferror(g_pico_fio.fp)){
+    if(ferror(g_igluno_fio.fp)){
 	eml.s = errstr(errno);
         emlwrite("\007Write error: %s", &eml);
 	sleep(5);
@@ -101,14 +101,14 @@ ffgetline(UCS buf[], size_t nbuf, size_t *charsreturned, int msg)
 
     i = 0;
 
-    while((ucs = read_a_wide_char(g_pico_fio.fp, input_cs)) != CCONV_EOF && ucs != '\n'){
+    while((ucs = read_a_wide_char(g_igluno_fio.fp, input_cs)) != CCONV_EOF && ucs != '\n'){
 	/*
 	 * Don't blat the CR should the newline be CRLF and we're
 	 * running on a unix system.  NOTE: this takes care of itself
 	 * under DOS since the non-binary open turns newlines into '\n'.
 	 */
 	if(ucs == '\r'){
-	    if((ucs = read_a_wide_char(g_pico_fio.fp, input_cs)) == CCONV_EOF || ucs == '\n')
+	    if((ucs = read_a_wide_char(g_igluno_fio.fp, input_cs)) == CCONV_EOF || ucs == '\n')
 	      break;
 
 	    if(i < nbuf-2)		/* Bare CR. Insert it and go on... */
@@ -131,7 +131,7 @@ ffgetline(UCS buf[], size_t nbuf, size_t *charsreturned, int msg)
     }
 
     if(ucs == CCONV_EOF){
-        if(ferror(g_pico_fio.fp)){
+        if(ferror(g_igluno_fio.fp)){
             emlwrite("File read error", NULL);
 	    if(charsreturned)
 	      *charsreturned = i;

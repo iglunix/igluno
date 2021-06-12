@@ -111,14 +111,14 @@ int	color_to_val(char *);
  * Arg   state = ON   set bold
  *               OFF  set normal
  */
-/* void
+void
 flip_rev_color(int state)
 {
     if((rev_color_state = state) == TRUE)
-      (void)pico_set_colorp(the_rev_color, PSC_NONE);
+      (void)igluno_set_colorp(the_rev_color, PSC_NONE);
     else
-      pico_set_normal_color();
-} */
+      igluno_set_normal_color();
+}
 
 
 /*
@@ -141,7 +141,7 @@ flip_bold(int state)
     else{
 	if(_clearallattr != NULL){
 	    if(!color_blasted_by_attrs)
-	      /* color_blasted_by_attrs = pico_get_cur_color(); */
+	      color_blasted_by_attrs = igluno_get_cur_color();
 
 	    _force_fg_color_change = _force_bg_color_change = 1;
 	    putpad(_clearallattr);
@@ -176,8 +176,8 @@ flip_inv(int state)
 	 * be clear all attributes.
 	 */
 	if(_clearinverse != NULL){
-	    /*if(!color_blasted_by_attrs)
-	      color_blasted_by_attrs = pico_get_cur_color();*/
+	    if(!color_blasted_by_attrs)
+	      color_blasted_by_attrs = igluno_get_cur_color();
 
 	    _force_fg_color_change = _force_bg_color_change = 1;
 	    putpad(_clearinverse);
@@ -212,8 +212,8 @@ flip_ul(int state)
 	 * be clear all attributes.
 	 */
 	if(_clearunderline != NULL){
-	    /*if(!color_blasted_by_attrs)
-	      color_blasted_by_attrs = pico_get_cur_color();*/
+	    if(!color_blasted_by_attrs)
+	      color_blasted_by_attrs = igluno_get_cur_color();
 
 	    _force_fg_color_change = _force_bg_color_change = 1;
 	    putpad(_clearunderline);
@@ -296,28 +296,28 @@ reset_attr_state(void)
     if(ulstate == FALSE && pulstate != ulstate)
       flip_ul(ulstate);
 
-    /* if(invstate == FALSE){
-	if(pico_get_rev_color()){
+    if(invstate == FALSE){
+	if(igluno_get_rev_color()){
 	    if(rev_color_state != invstate)
 	      flip_rev_color(invstate);
 	}
 	else{
 	    if(pinvstate != invstate)
 	      flip_inv(invstate);
-	} */
+	}
     }
-
+    
     /*
      * Now turn everything on that needs turning on.
      */
-    /* if(boldstate == TRUE && pboldstate != boldstate)
+    if(boldstate == TRUE && pboldstate != boldstate)
       flip_bold(boldstate);
 
     if(ulstate == TRUE && pulstate != ulstate)
       flip_ul(ulstate);
 
     if(invstate == TRUE){
-	if(pico_get_rev_color()){
+	if(igluno_get_rev_color()){
 	    if(rev_color_state != invstate)
 	      flip_rev_color(invstate);
 	}
@@ -325,14 +325,14 @@ reset_attr_state(void)
 	    if(pinvstate != invstate)
 	      flip_inv(invstate);
 	}
-} */
+    }
 
-    /*if(color_blasted_by_attrs){
-	(void)pico_set_colorp(color_blasted_by_attrs, PSC_NONE);
+    if(color_blasted_by_attrs){
+	(void)igluno_set_colorp(color_blasted_by_attrs, PSC_NONE);
 	free_color_pair(&color_blasted_by_attrs);
-}*/
+    }
 
-
+}
 
 
 void
@@ -378,7 +378,7 @@ tfgcolor(int color)
 
     if(!_color_inited)
       return(-1);
-
+    
     if((ANSI8_COLOR()  && (color < 0 || color >= 8+COL_TRANS())) ||
        (ANSI16_COLOR() && (color < 0 || color >= 16+COL_TRANS())) ||
        (ANSI256_COLOR() && (color < 0 || color >= 256+COL_TRANS())) ||
@@ -388,7 +388,7 @@ tfgcolor(int color)
     if(ANSI_COLOR()){
 	char buf[20];
 
-	if(COL_TRANS() && color == pico_count_in_color_table()-1)
+	if(COL_TRANS() && color == igluno_count_in_color_table()-1)
 	  snprintf(buf, sizeof(buf), "\033[39m");
 	else if(ANSI256_COLOR())
 	  snprintf(buf, sizeof(buf), "\033[38;5;%dm", color);
@@ -398,10 +398,10 @@ tfgcolor(int color)
 	    else
 	      snprintf(buf, sizeof(buf), "\033[9%cm", (color-8) + '0');
 	}
-
+	
 	putpad(buf);
     }
-    else if(COL_TRANS() && color == pico_count_in_color_table()-1 && _op){
+    else if(COL_TRANS() && color == igluno_count_in_color_table()-1 && _op){
 	char bg_color_was[MAXCOLORLEN+1];
 
 	bg_color_was[0] = '\0';
@@ -423,7 +423,7 @@ tfgcolor(int color)
 	putpad(_op);
 	if(bg_color_was[0]){
 	    _force_bg_color_change = 1;
-	    pico_set_bg_color(bg_color_was);
+	    igluno_set_bg_color(bg_color_was);
 	}
     }
     else if(_setaf)
@@ -446,7 +446,7 @@ tbgcolor(int color)
 
     if(!_color_inited)
       return(-1);
-
+    
     if((ANSI8_COLOR()  && (color < 0 || color >= 8+COL_TRANS())) ||
        (ANSI16_COLOR() && (color < 0 || color >= 16+COL_TRANS())) ||
        (ANSI256_COLOR() && (color < 0 || color >= 256+COL_TRANS())) ||
@@ -456,7 +456,7 @@ tbgcolor(int color)
     if(ANSI_COLOR()){
 	char buf[20];
 
-	if(COL_TRANS() && color == pico_count_in_color_table()-1)
+	if(COL_TRANS() && color == igluno_count_in_color_table()-1)
 	  snprintf(buf, sizeof(buf), "\033[49m");
 	else if(ANSI256_COLOR())
 	  snprintf(buf, sizeof(buf), "\033[48;5;%dm", color);
@@ -466,10 +466,10 @@ tbgcolor(int color)
 	    else
 	      snprintf(buf, sizeof(buf), "\033[10%cm", (color-8) + '0');
 	}
-
+	
 	putpad(buf);
     }
-    else if(COL_TRANS() && color == pico_count_in_color_table()-1 && _op){
+    else if(COL_TRANS() && color == igluno_count_in_color_table()-1 && _op){
 	char fg_color_was[MAXCOLORLEN+1];
 
 	fg_color_was[0] = '\0';
@@ -491,7 +491,7 @@ tbgcolor(int color)
 	putpad(_op);
 	if(fg_color_was[0]){
 	    _force_fg_color_change = 1;
-	    pico_set_fg_color(fg_color_was);
+	    igluno_set_fg_color(fg_color_was);
 	}
     }
     else if(_setab)
@@ -528,7 +528,7 @@ init_color_table(void)
     int                 i, count;
     char                colorname[12];
 
-    count = pico_count_in_color_table();
+    count = igluno_count_in_color_table();
 
     if(count > 0 && count <= 256+COL_TRANS()){
 	int    ind, graylevel;
@@ -902,7 +902,7 @@ colorx(int color)
 	    return(cbuf);
 	}
     }
-
+    
     for(ct = color_tbl; ct->names; ct++)
       if(ct->val == color)
         break;
@@ -932,7 +932,7 @@ color_to_canonical_name(char *s)
 
     if(!s || !color_tbl)
       return(NULL);
-
+    
     if(*s == ' ' || isdigit(*s)){
 	/* check for rgb string instead of name */
 	for(ct = color_tbl; ct->rgb; ct++)
@@ -942,20 +942,20 @@ color_to_canonical_name(char *s)
     else{
 	for(done=0, ct = color_tbl; !done && ct->names; ct++){
 	  for(nl = ct->names; !done && nl; nl = nl->next)
-	    /* if(nl->name && !struncmp(nl->name, s, nl->namelen))
-	      done++; */
-
+	    if(nl->name && !struncmp(nl->name, s, nl->namelen))
+	      done++;
+	  
 	  if(done)
 	    break;
 	}
     }
-
+    
     /* rgb is the canonical name */
-    /* if(ct->names)
+    if(ct->names)
       return(ct->rgb);
     else if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN) || !struncmp(s, MATCH_NONE_COLOR, RGBLEN))
-      return(s); */
-
+      return(s);
+    
     return("");
 }
 
@@ -976,7 +976,7 @@ color_to_val(char *s)
 
     if(!s || !color_tbl)
       return(-1);
-
+    
     if(*s == ' ' || isdigit(*s)){
 	/* check for rgb string instead of name */
 	for(ct = color_tbl; ct->rgb; ct++)
@@ -1040,14 +1040,14 @@ color_to_val(char *s)
     else{
 	for(done=0, ct = color_tbl; !done && ct->names; ct++){
 	  for(nl = ct->names; !done && nl; nl = nl->next)
-	    /*if(nl->name && !struncmp(nl->name, s, nl->namelen))
-	      done++;*/
-
+	    if(nl->name && !struncmp(nl->name, s, nl->namelen))
+	      done++;
+	  
 	  if(done)
 	    break;
 	}
     }
-
+    
     if(ct->names)
       return(ct->val);
     else
@@ -1067,14 +1067,14 @@ free_color_table(struct color_table **ctbl)
 	    if(t->rgb)
 	      fs_give((void **) &t->rgb);
 	}
-
+	
 	fs_give((void **) ctbl);
     }
 }
 
 
 int
-pico_count_in_color_table(void)
+igluno_count_in_color_table(void)
 {
     return(
       (ANSI_COLOR()
@@ -1085,7 +1085,7 @@ pico_count_in_color_table(void)
 
 
 void
-pico_nfcolor(char *s)
+igluno_nfcolor(char *s)
 {
     if(_nfcolor)
       fs_give((void **) &_nfcolor);
@@ -1105,13 +1105,13 @@ pico_nfcolor(char *s)
 	  the_normal_color->fg[MAXCOLORLEN] = '\0';
 	}
     }
-    /*else if(the_normal_color)
-      free_color_pair(&the_normal_color);*/
+    else if(the_normal_color)
+      free_color_pair(&the_normal_color);
 }
 
 
 void
-pico_nbcolor(char *s)
+igluno_nbcolor(char *s)
 {
     if(_nbcolor)
       fs_give((void **) &_nbcolor);
@@ -1131,12 +1131,12 @@ pico_nbcolor(char *s)
 	  the_normal_color->bg[MAXCOLORLEN] = '\0';
 	}
     }
-    /*else if(the_normal_color)
-      free_color_pair(&the_normal_color);*/
+    else if(the_normal_color)
+      free_color_pair(&the_normal_color);
 }
 
 void
-pico_rfcolor(char *s)
+igluno_rfcolor(char *s)
 {
     if(_rfcolor)
       fs_give((void **) &_rfcolor);
@@ -1156,12 +1156,12 @@ pico_rfcolor(char *s)
 	  the_rev_color->fg[MAXCOLORLEN] = '\0';
 	}
     }
-    /*else if(the_rev_color)
-      free_color_pair(&the_rev_color);*/
+    else if(the_rev_color)
+      free_color_pair(&the_rev_color);
 }
 
 void
-pico_rbcolor(char *s)
+igluno_rbcolor(char *s)
 {
     if(_rbcolor)
       fs_give((void **) &_rbcolor);
@@ -1181,13 +1181,13 @@ pico_rbcolor(char *s)
 	  the_rev_color->bg[MAXCOLORLEN] = '\0';
 	}
     }
-    /*else if(the_rev_color)
-      free_color_pair(&the_rev_color);*/
+    else if(the_rev_color)
+      free_color_pair(&the_rev_color);
 }
 
 
 int
-pico_hascolor(void)
+igluno_hascolor(void)
 {
     if(!_color_inited)
       tinitcolor();
@@ -1197,9 +1197,9 @@ pico_hascolor(void)
 
 
 int
-pico_usingcolor(void)
+igluno_usingcolor(void)
 {
-    return(_using_color && pico_hascolor());
+    return(_using_color && igluno_hascolor());
 }
 
 
@@ -1209,17 +1209,17 @@ pico_usingcolor(void)
  * color stuff or the Windows stuff.
  */
 int
-pico_trans_color(void)
+igluno_trans_color(void)
 {
     return(_bce && _op);
 }
 
 
 void
-pico_toggle_color(int on)
+igluno_toggle_color(int on)
 {
     if(on){
-	if(pico_hascolor())
+	if(igluno_hascolor())
 	  _using_color = 1;
     }
     else{
@@ -1243,14 +1243,14 @@ pico_toggle_color(int on)
 
 
 unsigned
-pico_get_color_options(void)
+igluno_get_color_options(void)
 {
     return(color_options);
 }
 
 
 int
-pico_trans_is_on(void)
+igluno_trans_is_on(void)
 {
     return(COL_TRANS());
 }
@@ -1260,15 +1260,15 @@ pico_trans_is_on(void)
  * Absolute set of options. Caller has to OR things together and so forth.
  */
 void
-pico_set_color_options(unsigned flags)
+igluno_set_color_options(unsigned flags)
 {
     color_options = flags;
 }
 
 void
-pico_endcolor(void)
+igluno_endcolor(void)
 {
-    pico_toggle_color(0);
+    igluno_toggle_color(0);
     if(panicking())
       return;
 
@@ -1290,37 +1290,37 @@ pico_endcolor(void)
     if(_last_bg_color)
       fs_give((void **) &_last_bg_color);
 
-    /*if(the_rev_color)
+    if(the_rev_color)
       free_color_pair(&the_rev_color);
 
     if(the_normal_color)
-      free_color_pair(&the_normal_color);*/
+      free_color_pair(&the_normal_color);
 }
 
 
 void
-pico_set_nfg_color(void)
+igluno_set_nfg_color(void)
 {
     if(_nfcolor)
-      (void)pico_set_fg_color(_nfcolor);
+      (void)igluno_set_fg_color(_nfcolor);
 }
 
 
 void
-pico_set_nbg_color(void)
+igluno_set_nbg_color(void)
 {
     if(_nbcolor)
-      (void)pico_set_bg_color(_nbcolor);
+      (void)igluno_set_bg_color(_nbcolor);
 }
 
 
 void
-pico_set_normal_color(void)
+igluno_set_normal_color(void)
 {
     if(!_nfcolor || !_nbcolor ||
-       !pico_set_fg_color(_nfcolor) || !pico_set_bg_color(_nbcolor)){
-	(void)pico_set_fg_color(DEFAULT_NORM_FORE_RGB);
-	(void)pico_set_bg_color(DEFAULT_NORM_BACK_RGB);
+       !igluno_set_fg_color(_nfcolor) || !igluno_set_bg_color(_nbcolor)){
+	(void)igluno_set_fg_color(DEFAULT_NORM_FORE_RGB);
+	(void)igluno_set_bg_color(DEFAULT_NORM_BACK_RGB);
     }
 }
 
@@ -1332,13 +1332,13 @@ pico_set_normal_color(void)
  * NOTE: Don't free this!
  */
 COLOR_PAIR *
-pico_get_rev_color(void)
+igluno_get_rev_color(void)
 {
-    if(pico_usingcolor() && _rfcolor && _rbcolor &&
-       pico_is_good_color(_rfcolor) && pico_is_good_color(_rbcolor)){
-	/* if(!the_rev_color)
-	  the_rev_color = new_color_pair(_rfcolor, _rbcolor); */
-
+    if(igluno_usingcolor() && _rfcolor && _rbcolor &&
+       igluno_is_good_color(_rfcolor) && igluno_is_good_color(_rbcolor)){
+	if(!the_rev_color)
+	  the_rev_color = new_color_pair(_rfcolor, _rbcolor);
+	
 	return(the_rev_color);
     }
     else
@@ -1352,13 +1352,13 @@ pico_get_rev_color(void)
  * NOTE: Don't free this!
  */
 COLOR_PAIR *
-pico_get_normal_color(void)
+igluno_get_normal_color(void)
 {
-    if(pico_usingcolor() && _nfcolor && _nbcolor &&
-       pico_is_good_color(_nfcolor) && pico_is_good_color(_nbcolor)){
-	/*if(!the_normal_color)
-	  the_normal_color = new_color_pair(_nfcolor, _nbcolor);*/
-
+    if(igluno_usingcolor() && _nfcolor && _nbcolor &&
+       igluno_is_good_color(_nfcolor) && igluno_is_good_color(_nbcolor)){
+	if(!the_normal_color)
+	  the_normal_color = new_color_pair(_nfcolor, _nbcolor);
+	
 	return(the_normal_color);
     }
     else
@@ -1376,28 +1376,28 @@ pico_get_normal_color(void)
  * color pair, otherwise returns NULL.
  */
 COLOR_PAIR *
-pico_set_colors(char *fg, char *bg, int flags)
+igluno_set_colors(char *fg, char *bg, int flags)
 {
     int         uc;
     COLOR_PAIR *cp = NULL, *rev = NULL;
 
-    /* if(flags & PSC_RET)
-      cp = pico_get_cur_color(); */
+    if(flags & PSC_RET)
+      cp = igluno_get_cur_color();
 
     if(fg && !strcmp(fg, END_PSEUDO_REVERSE)){
 	EndInverse();
-	/*if(cp)
-	  free_color_pair(&cp);*/
+	if(cp)
+	  free_color_pair(&cp);
     }
-    else if(!((uc=pico_usingcolor()) && fg && bg &&
-	      pico_set_fg_color(fg) && pico_set_bg_color(bg))){
+    else if(!((uc=igluno_usingcolor()) && fg && bg &&
+	      igluno_set_fg_color(fg) && igluno_set_bg_color(bg))){
 
 	if(uc && flags & PSC_NORM)
-	  pico_set_normal_color();
+	  igluno_set_normal_color();
 	else if(flags & PSC_REV){
-	    if((rev = pico_get_rev_color()) != NULL){
-		pico_set_fg_color(rev->fg);	/* these will succeed */
-		pico_set_bg_color(rev->bg);
+	    if((rev = igluno_get_rev_color()) != NULL){
+		igluno_set_fg_color(rev->fg);	/* these will succeed */
+		igluno_set_bg_color(rev->bg);
 	    }
 	    else{
 		StartInverse();
@@ -1416,7 +1416,7 @@ pico_set_colors(char *fg, char *bg, int flags)
 
 
 int
-pico_is_good_color(char *s)
+igluno_is_good_color(char *s)
 {
     struct color_table *ct;
     struct color_name_list *nl;
@@ -1427,8 +1427,8 @@ pico_is_good_color(char *s)
 
     if(!strcmp(s, END_PSEUDO_REVERSE))
       return(TRUE);
-    /*else if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN) || !struncmp(s, MATCH_NONE_COLOR, RGBLEN))
-      return(TRUE);*/
+    else if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN) || !struncmp(s, MATCH_NONE_COLOR, RGBLEN))
+      return(TRUE);
     else if(*s == ' ' || isdigit(*s)){
 	/* check for rgb string instead of name */
 	for(ct = color_tbl; ct->rgb; ct++)
@@ -1469,14 +1469,14 @@ pico_is_good_color(char *s)
     else{
 	for(done=0, ct = color_tbl; !done && ct->names; ct++){
 	  for(nl = ct->names; !done && nl; nl = nl->next)
-	    /*if(nl->name && !struncmp(nl->name, s, nl->namelen))
-	      done++;*/
-
+	    if(nl->name && !struncmp(nl->name, s, nl->namelen))
+	      done++;
+	  
 	  if(done)
 	    break;
 	}
     }
-
+    
     return(ct->names ? TRUE : FALSE);
 }
 
@@ -1485,7 +1485,7 @@ pico_is_good_color(char *s)
  * Return TRUE on success.
  */
 int
-pico_set_fg_color(char *s)
+igluno_set_fg_color(char *s)
 {
     int val;
 
@@ -1497,10 +1497,10 @@ pico_set_fg_color(char *s)
 	return(TRUE);
     }
 
-    /* if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN))
+    if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN))
       s = _nfcolor;
     else if(!struncmp(s, MATCH_NONE_COLOR, RGBLEN))
-      return(TRUE); */
+      return(TRUE);
 
     if((val = color_to_val(s)) >= 0){
 	size_t len;
@@ -1517,7 +1517,7 @@ pico_set_fg_color(char *s)
 	if(changed){
 	    if(_last_fg_color)
 	      fs_give((void **) &_last_fg_color);
-
+	    
 	    len = strlen(colorx(val));
 	    if((_last_fg_color = (char *) fs_get((len+1) * sizeof(char))) != NULL){
 	      strncpy(_last_fg_color, colorx(val), len+1);
@@ -1534,7 +1534,7 @@ pico_set_fg_color(char *s)
 
 
 int
-pico_set_bg_color(char *s)
+igluno_set_bg_color(char *s)
 {
     int val;
 
@@ -1546,10 +1546,10 @@ pico_set_bg_color(char *s)
 	return(TRUE);
     }
 
-    /* if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN))
+    if(!struncmp(s, MATCH_NORM_COLOR, RGBLEN))
       s = _nbcolor;
     else if(!struncmp(s, MATCH_NONE_COLOR, RGBLEN))
-      return(TRUE); */
+      return(TRUE);
 
     if((val = color_to_val(s)) >= 0){
 	size_t len;
@@ -1566,7 +1566,7 @@ pico_set_bg_color(char *s)
 	if(changed){
 	    if(_last_bg_color)
 	      fs_give((void **) &_last_bg_color);
-
+	    
 	    len = strlen(colorx(val));
 	    if((_last_bg_color = (char *) fs_get((len+1) * sizeof(char))) != NULL){
 	      strncpy(_last_bg_color, colorx(val), len+1);
@@ -1606,13 +1606,13 @@ color_to_asciirgb(char *colorName)
 
     for(done=0, ct = color_tbl; !done && ct->names; ct++){
       for(nl = ct->names; !done && nl; nl = nl->next)
-	/*if(nl->name && !struncmp(nl->name, colorName, nl->namelen))
-	  done++;*/
-
+	if(nl->name && !struncmp(nl->name, colorName, nl->namelen))
+	  done++;
+      
       if(done)
 	break;
     }
-
+    
     if(ct && ct->names){
 	strncpy(c_to_a_buf[whichbuf], ct->rgb, sizeof(c_to_a_buf[0]));
 	c_to_a_buf[whichbuf][sizeof(c_to_a_buf[0])-1] = '\0';
@@ -1684,13 +1684,13 @@ color_to_asciirgb(char *colorName)
 	strncpy(c_to_a_buf[whichbuf], colorName, (l < RGBLEN) ? l : RGBLEN);
 	c_to_a_buf[whichbuf][RGBLEN] = '\0';
     }
-
+    
     return(c_to_a_buf[whichbuf]);
 }
 
 
 char *
-pico_get_last_fg_color(void)
+igluno_get_last_fg_color(void)
 {
     char *ret = NULL;
 
@@ -1709,7 +1709,7 @@ pico_get_last_fg_color(void)
 
 
 char *
-pico_get_last_bg_color(void)
+igluno_get_last_bg_color(void)
 {
     char *ret = NULL;
 
@@ -1727,16 +1727,17 @@ pico_get_last_bg_color(void)
 }
 
 
-/* pico_get_cur_color(void)
+COLOR_PAIR *
+igluno_get_cur_color(void)
 {
     return(new_color_pair(_last_fg_color, _last_bg_color));
-} */
+}
 
 #else  /* _WINDOWS */
 static short _in_inverse, _in_bold, _in_uline;
 
 int
-pico_trans_is_on(void)
+igluno_trans_is_on(void)
 {
     return(0);
 }

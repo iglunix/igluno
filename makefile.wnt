@@ -13,7 +13,7 @@
 
 #
 #
-# Makefile for WIN NT version of libpico.lib and pico.exe
+# Makefile for WIN NT version of libigluno.lib and igluno.exe
 #
 #
 CC=cl
@@ -34,36 +34,36 @@ LFLAGS= $(LDEBUG) $(EXTRALDFLAGS)
 RCFLAGS =
 
 LIBS=	oldnames.lib kernel32.lib advapi32.lib ws2_32.lib user32.lib gdi32.lib shell32.lib comdlg32.lib \
-	libpico.lib osdep/libpicoosd.lib osdep/mswin.res \
+	libigluno.lib osdep/libiglunoosd.lib osdep/mswin.res \
 	../c-client/utf8.obj ../pith/osdep/libpithosd.lib ../pith/charconv/libpithcc.lib
 LIBER=lib
 LIBARGS=/nologo /verbose
 
 HFILES=	../include/system.h ../include/general.h \
-	ebind.h edef.h efunc.h estruct.h headers.h keydefs.h mode.h pico.h
+	ebind.h edef.h efunc.h estruct.h headers.h keydefs.h mode.h igluno.h
 
 OFILES=	attach.obj basic.obj bind.obj browse.obj buffer.obj composer.obj \
-	display.obj file.obj fileio.obj line.obj pico.obj random.obj \
+	display.obj file.obj fileio.obj line.obj igluno.obj random.obj \
 	region.obj search.obj utf8stub.obj window.obj word.obj
 
-all:	blddate.exe pico.exe
+all:	blddate.exe igluno.exe
 
 .c.obj:
 	$(CC) -c $(CFLAGS) "$(MAKEDIR)"\$*.c
 
 $(OFILES):	$(HFILES)
 
-libpico.lib:	$(OFILES)
-		$(RM) libpico.lib || rem
-		$(LIBER) /out:libpico.lib $(OFILES)
+libigluno.lib:	$(OFILES)
+		$(RM) libigluno.lib || rem
+		$(LIBER) /out:libigluno.lib $(OFILES)
 
 blddate.exe: blddate.c
 	$(CC) $(CFLAGS) blddate.c
 
-pico.exe: main.obj libpico.lib $(OFILES) mswinver.obj osdep/libpicoosd.lib ../pith/osdep/libpithosd.lib ../c-client/utf8.obj ../pith/charconv/libpithcc.lib osdep/mswin.res
+igluno.exe: main.obj libigluno.lib $(OFILES) mswinver.obj osdep/libiglunoosd.lib ../pith/osdep/libpithosd.lib ../c-client/utf8.obj ../pith/charconv/libpithcc.lib osdep/mswin.res
 	blddate > bdate.c
 	$(CC) /c $(CFLAGS) bdate.c
-	link /subsystem:windows /entry:wWinMainCRTStartup /out:pico.exe $(LFLAGS) bdate.obj mswinver.obj main.obj $(LIBS)
+	link /subsystem:windows /entry:wWinMainCRTStartup /out:igluno.exe $(LFLAGS) bdate.obj mswinver.obj main.obj $(LIBS)
 
 clean:
 	$(RM) *.lib

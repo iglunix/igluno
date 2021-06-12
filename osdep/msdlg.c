@@ -28,11 +28,11 @@ static char rcsid[] = "$Id: msdlg.c 1014 2008-03-26 17:27:45Z hubert@u.washingto
  * Internet: tunger@cac.washington.edu
  *
  *
- * Pine and Pico are registered trademarks of the University of Washington.
+ * Pine and igluno are registered trademarks of the University of Washington.
  * No commercial use of these trademarks may be made without prior written
  * permission of the University of Washington.
  * 
- * Pine, Pico, and Pilot software and its included text are Copyright
+ * Pine, igluno, and Pilot software and its included text are Copyright
  * 1989-1998 by the University of Washington.
  * 
  * The full text of our legal notices is contained in the file called
@@ -55,7 +55,7 @@ static char rcsid[] = "$Id: msdlg.c 1014 2008-03-26 17:27:45Z hubert@u.washingto
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../keydefs.h"
 #include "../edef.h"
 #include "../efunc.h"

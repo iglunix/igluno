@@ -14,12 +14,12 @@
  */
 
 
-#ifndef PICO_OSDEP_SPELL_INCLUDED
-#define PICO_OSDEP_SPELL_INCLUDED
+#ifndef igluno_OSDEP_SPELL_INCLUDED
+#define igluno_OSDEP_SPELL_INCLUDED
 
 
 /* exported prototypes */
 int	spell(int, int);
 
 
-#endif /* PICO_OSDEP_SPELL_INCLUDED */
+#endif /* igluno_OSDEP_SPELL_INCLUDED */

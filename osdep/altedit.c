@@ -25,7 +25,7 @@ static char rcsid[] = "$Id: altedit.c 847 2007-12-06 18:06:35Z hubert@u.washingt
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -42,8 +42,8 @@ static char rcsid[] = "$Id: altedit.c 847 2007-12-06 18:06:35Z hubert@u.washingt
 #include "signals.h"
 
 #ifdef	SIGCHLD
-static jmp_buf pico_child_state;
-static short   pico_child_jmp_ok, pico_child_done;
+static jmp_buf igluno_child_state;
+static short   igluno_child_jmp_ok, igluno_child_done;
 #endif /* SIGCHLD */
 
 #endif /* !_WINDOWS */
@@ -219,7 +219,7 @@ alt_editor(int f, int n)
 	 * The idea here is to keep any mail connections our caller
 	 * may have open while our child's out running around...
 	 */
-	pico_child_done = pico_child_jmp_ok = 0;
+	igluno_child_done = igluno_child_jmp_ok = 0;
 	(void) signal(SIGCHLD,  child_handler);
     }
 #endif
@@ -233,18 +233,18 @@ alt_editor(int f, int n)
 
 #ifdef	SIGCHLD
 	if(Pmaster){
-	    while(!pico_child_done){
+	    while(!igluno_child_done){
 		(*Pmaster->newmail)(0, 0);
-		if(!pico_child_done){
-		    if(setjmp(pico_child_state) == 0){
-			pico_child_jmp_ok = 1;
+		if(!igluno_child_done){
+		    if(setjmp(igluno_child_state) == 0){
+			igluno_child_jmp_ok = 1;
 			sleep(600);
 		    }
 		    else
 		      our_sigunblock(SIGCHLD);
 		}
 
-		pico_child_jmp_ok = 0;
+		igluno_child_jmp_ok = 0;
 	    }
 	}
 #endif
@@ -332,7 +332,7 @@ alt_editor(int f, int n)
     our_unlink(fn);			/* blast temp file */
     curbp->b_flag |= BFCHG;		/* mark dirty for packbuf() */
     ttopen();				/* reset the signals */
-    pico_refresh(0, 1);			/* redraw */
+    igluno_refresh(0, 1);			/* redraw */
     update();
     emlwrite(result, &eml);
     return(ret);
@@ -487,7 +487,7 @@ alt_editor(int f, int n)
 	our_unlink(fn);			/* blast temp file */
 	curbp->b_flag |= BFCHG;		/* mark dirty for packbuf() */
 	ttopen();			/* reset the signals */
-	pico_refresh(0, 1);		/* redraw */
+	igluno_refresh(0, 1);		/* redraw */
 	return(0);
 
 	
@@ -556,8 +556,8 @@ pathcat(char *buf, char **path, char *file)
 RETSIGTYPE
 child_handler(int sig)
 {
-    pico_child_done = 1;
-    if(pico_child_jmp_ok){
+    igluno_child_done = 1;
+    if(igluno_child_jmp_ok){
 #ifdef	sco
 	/*
 	 * Villy Kruse <vek@twincom.nl> says:
@@ -585,7 +585,7 @@ child_handler(int sig)
 	signal(SIGALRM, SIG_IGN);	/* Cancel signal handeler */
 	alarm(0);			/* might longjmp back into sleep */ 
 #endif
-	longjmp(pico_child_state, 1);
+	longjmp(igluno_child_state, 1);
     }
 }
 #endif	/* SIGCHLD */

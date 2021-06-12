@@ -13,8 +13,8 @@
  * ========================================================================
  */
 
-#ifndef PICO_OSDEP_ALTEDIT_INCLUDED
-#define PICO_OSDEP_ALTEDIT_INCLUDED
+#ifndef igluno_OSDEP_ALTEDIT_INCLUDED
+#define igluno_OSDEP_ALTEDIT_INCLUDED
 
 
 
@@ -25,4 +25,4 @@ int	   pathcat(char *, char **, char *);
 #endif
 
 
-#endif /* PICO_OSDEP_ALTEDIT_INCLUDED */
+#endif /* igluno_OSDEP_ALTEDIT_INCLUDED */

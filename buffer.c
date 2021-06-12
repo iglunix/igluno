@@ -170,7 +170,7 @@ bclear(BUFFER *bp)
 
 /*
  * packbuf - will pack up the main buffer in the buffer provided 
- *           to be returned to the program that called pico.
+ *           to be returned to the program that called igluno.
  *	     if need be, allocate memory for the new message. 
  *           will also free the memory associated with the editor
  *           buffer, by calling zotedit.

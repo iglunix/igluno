@@ -21,7 +21,7 @@ static char rcsid[] = "$Id: chkpoint.c 676 2007-08-20 19:46:37Z hubert@u.washing
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -51,9 +51,9 @@ chkptinit(char *file, size_t filelen)
 	  gmode &= ~MDCURDIR;  /* so fixpath will use home dir */
 
 #ifndef _WINDOWS
-	strncpy(file, "#picoXXXXX#", filelen);
+	strncpy(file, "#iglunoXXXXX#", filelen);
 #else
-	strncpy(file, "#picoTM0.txt", filelen);
+	strncpy(file, "#iglunoTM0.txt", filelen);
 #endif
 	file[filelen-1] = '\0';
 	fixpath(file, filelen);
@@ -68,9 +68,9 @@ chkptinit(char *file, size_t filelen)
 	}
 
 #ifndef _WINDOWS
-	strncpy(file + l, "#picoXXXXX#", filelen-l);
+	strncpy(file + l, "#iglunoXXXXX#", filelen-l);
 #else
-	strncpy(file + l, "#picoTM0.txt", filelen-l);
+	strncpy(file + l, "#iglunoTM0.txt", filelen-l);
 #endif
 	file[filelen-1] = '\0';
     }
@@ -85,7 +85,7 @@ chkptinit(char *file, size_t filelen)
     if(fexist(file, "r", (off_t *)NULL) == FIOSUC){ /* does file exist? */
 	char copy[NLINE];
 
-	strncpy(copy, "#picoTM1.txt", sizeof(copy));
+	strncpy(copy, "#iglunoTM1.txt", sizeof(copy));
 	copy[sizeof(copy)-1] = '\0';
 	fixpath(copy, sizeof(copy));
 	our_rename(file, copy);  /* save so we don't overwrite it */

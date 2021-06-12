@@ -122,8 +122,8 @@
 /* timeout period in miliseconds. */
 #define MY_TIMER_PERIOD (UINT)((IDLE_TIMEOUT + 1)*1000)
 /***** We use variable my_timer_period now instead so that we can set
-       it differently when in pine and when in regular old pico.
-       We're not entirely sure we need it in pico, but we will leave
+       it differently when in pine and when in regular old igluno.
+       We're not entirely sure we need it in igluno, but we will leave
        it there because we don't understand.
  *****/
 #define MY_TIMER_SHORT_PERIOD (UINT)5000  /* used when there is a task in
@@ -177,8 +177,8 @@
  * Different applications that we know about.
  */
 #define APP_UNKNOWN		0
-#define APP_PICO		1
-#define APP_PICO_IDENT		TEXT("pico")
+#define APP_igluno		1
+#define APP_igluno_IDENT		TEXT("igluno")
 #define APP_PINE		2
 #define APP_PINE_IDENT		TEXT("pine")
 
@@ -522,7 +522,7 @@ LOCAL int	MSWRAlpineGet(HKEY hKey, LPTSTR subkey, LPTSTR val,
 
 LOCAL void	MSWIconAddList(int row, int id, HICON hIcon);
 LOCAL int	MSWIconPaint(int row, HDC hDC);
-LOCAL void	MSWIconFree(IconList **ppIcon);
+LOCAL void	MSWIconFree(IconList **piglunon);
 LOCAL void      MSWRLineBufAdd(MSWR_LINE_BUFFER_S *lpLineBuf, LPTSTR line);
 LOCAL int       MSWRDump(HKEY hKey, LPTSTR pSubKey, int keyDepth,
 			 MSWR_LINE_BUFFER_S *lpLineBuf);
@@ -993,7 +993,7 @@ InitInstance (HANDLE hInstance, int nCmdShow)
 #ifdef	IDC_HAND
     ghCursorHand = LoadCursor (NULL, IDC_HAND);
 #else
-    ghCursorHand = LoadCursor (hInstance, MAKEINTRESOURCE( PICOHAND ));
+    ghCursorHand = LoadCursor (hInstance, MAKEINTRESOURCE( iglunoHAND ));
 #endif
     ghCursorCurrent = ghCursorArrow;
 
@@ -1014,8 +1014,8 @@ InitInstance (HANDLE hInstance, int nCmdShow)
 	gWSBlockingProc = MakeProcInstance ( (FARPROC) NoMsgsAreSent,
 					      hInstance);
     }
-    else if (_tcscmp (appIdent, APP_PICO_IDENT) == 0)
-	gAppIdent = APP_PICO;
+    else if (_tcscmp (appIdent, APP_igluno_IDENT) == 0)
+	gAppIdent = APP_igluno;
     else
 	gAppIdent = APP_UNKNOWN;
 
@@ -1085,7 +1085,7 @@ MakeArgv (HINSTANCE hInstance, char *cmdLine_utf8, int *pargc, CHAR ***pargv)
         *(argv++) = (unsigned char *)lptstr_to_utf8(modPath_lptstr);
     }
     else
-      *(argv++) = (unsigned char *)"Alpine/Pico";
+      *(argv++) = (unsigned char *)"Alpine/igluno";
 
     MemFree((void *)modPath_lptstr);
 
@@ -1510,7 +1510,7 @@ PWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (gSignalHUP != SIG_DFL && gSignalHUP != SIG_IGN) {
 	    if (MessageBox (hWnd,
-			    TEXT("Abort PINE/PICO, possibly losing current work?"),
+			    TEXT("Abort PINE/igluno, possibly losing current work?"),
 			    gszAppName, MB_OKCANCEL | MB_ICONQUESTION) == IDOK)
 		HUPDeliver ();
 	}
@@ -1577,11 +1577,11 @@ CreateTTYInfo (HWND hWnd)
     pTTYInfo->yOffset			= MARGINE_TOP;
     pTTYInfo->fDesiredSize		= FALSE;
     pTTYInfo->fCursorOn			= TRUE;
-    pico_nfcolor(NULL);
-    pico_nbcolor(NULL);
-    pico_rfcolor(NULL);
-    pico_rbcolor(NULL);
-    pico_set_normal_color();
+    igluno_nfcolor(NULL);
+    igluno_nbcolor(NULL);
+    igluno_rfcolor(NULL);
+    igluno_rbcolor(NULL);
+    igluno_set_normal_color();
     pTTYInfo->toolBarTop		= TRUE;
     pTTYInfo->curToolBarID		= IDD_TOOLBAR;
 
@@ -1807,7 +1807,7 @@ ResizeTTYScreen (HWND hWnd, PTTYINFO pTTYInfo, int newNRow, int newNColumn)
 
 
 
-    /* Pico specific. */
+    /* igluno specific. */
     if (term.t_nrow == 0) {
 	term.t_nrow = (short)(newNRow - 1);
 	term.t_ncol = (short)newNColumn;
@@ -3010,7 +3010,7 @@ MoveTTYCursor (HWND hWnd)
  *
  *  Description:
  *	Called to process MW_KEYDOWN message.  We are only interested in
- *	virtual keys that pico/pine use.  All others get passed on to
+ *	virtual keys that igluno/pine use.  All others get passed on to
  *	the default message handler.  Regular key presses will return
  *	latter as a WM_CHAR message, with SHIFT and CONTROL processing
  *	already done.
@@ -3082,7 +3082,7 @@ ProcessTTYKeyDown (HWND hWnd, TCHAR key)
             if(key == '6') {
 	    /*
 	     * Ctrl-^ is used to set and clear the mark in the
-	     * composer (pico) On most other systems Ctrl-6 does the
+	     * composer (igluno) On most other systems Ctrl-6 does the
                  * same thing.  Allow that on windows too.
 	     */
                 myKey = '^';
@@ -3179,14 +3179,14 @@ ProcessTTYCharacter (HWND hWnd, TCHAR bOut)
  *	(text button at bottom of screen).  There is generally one
  *	region for the central region of the screen.
  *
- *	Because pine/pico do not interpret mouse drags, we do that here.
+ *	Because pine/igluno do not interpret mouse drags, we do that here.
  *	When the user presses the button and drags the mouse across the
  *	screen this select the text in the region defined by the drag.
  *	The operation is local to mswin.c, and can only get what text
  *	is on the screen.
  *
- *	The one exception is that now pico interprets mouse drag events
- *	in the body.  pico signals that it wants to track the mouse
+ *	The one exception is that now igluno interprets mouse drag events
+ *	in the body.  igluno signals that it wants to track the mouse
  *	by calling mswin_allowmousetrack().  This will 1) turn off
  *	our mouse tracking and 2) cause mouse movement events to
  *	be put on the mouse queue.
@@ -5297,7 +5297,7 @@ CopyCutPopup(HWND hWnd, UINT fAllowed)
  *
  */
 void
-pico_popup()
+igluno_popup()
 {
     MENUITEMINFO  mitem;
     HMENU	  hMenu;
@@ -5497,15 +5497,15 @@ mswin_registericon(int row, int id, char *utf8_file)
     LPTSTR    sPathCopy;
     HICON     hIcon;
     WORD      iIcon;
-    IconList *pIcon;
+    IconList *iglunon;
 
     /* Turn this off until it can get tuned */
     return;
 
     /* Already registered? */
-    for(pIcon = gIconList; pIcon; pIcon = pIcon->next)
-      if(pIcon->id == id){
-	  pIcon->row = (short)row;
+    for(iglunon = gIconList; iglunon; iglunon = iglunon->next)
+      if(iglunon->id == id){
+	  iglunon->row = (short)row;
 	  return;
       }
 
@@ -5528,32 +5528,32 @@ mswin_destroyicons()
 void
 MSWIconAddList(int row, int id, HICON hIcon)
 {
-    IconList **ppIcon;
+    IconList **piglunon;
 
-    for(ppIcon = &gIconList; *ppIcon; ppIcon = &(*ppIcon)->next)
+    for(piglunon = &gIconList; *piglunon; piglunon = &(*piglunon)->next)
       ;
 
-    *ppIcon = (IconList *) MemAlloc (sizeof (IconList));
-    memset(*ppIcon, 0, sizeof(IconList));
-    (*ppIcon)->hIcon = hIcon;
-    (*ppIcon)->id = id;
-    (*ppIcon)->row = (short)row;
+    *piglunon = (IconList *) MemAlloc (sizeof (IconList));
+    memset(*piglunon, 0, sizeof(IconList));
+    (*piglunon)->hIcon = hIcon;
+    (*piglunon)->id = id;
+    (*piglunon)->row = (short)row;
 }
 
 
 int
 MSWIconPaint(int row, HDC hDC)
 {
-    IconList *pIcon;
+    IconList *iglunon;
     int	      rv = 0;
 
-    for(pIcon = gIconList; pIcon && pIcon->row != row; pIcon = pIcon->next)
+    for(iglunon = gIconList; iglunon && iglunon->row != row; iglunon = iglunon->next)
       ;
 
-    if(pIcon){
+    if(iglunon){
 	/* Invalidate rectange covering singel character. */
 	DrawIconEx(hDC, 0, (row * gpTTYInfo->yChar) + gpTTYInfo->yOffset,
-		   pIcon->hIcon, 2 * gpTTYInfo->xChar, gpTTYInfo->yChar,
+		   iglunon->hIcon, 2 * gpTTYInfo->xChar, gpTTYInfo->yChar,
 		   0, NULL, DI_NORMAL);
 
 	rv = 1;
@@ -5564,15 +5564,15 @@ MSWIconPaint(int row, HDC hDC)
 
 
 void
-MSWIconFree(IconList **ppIcon)
+MSWIconFree(IconList **piglunon)
 {
-    if(ppIcon && *ppIcon){
-	if((*ppIcon)->next)
-	  MSWIconFree(&(*ppIcon)->next);
+    if(piglunon && *piglunon){
+	if((*piglunon)->next)
+	  MSWIconFree(&(*piglunon)->next);
 
-	DestroyIcon((*ppIcon)->hIcon);
-	MemFree (*ppIcon);
-	*ppIcon = NULL;
+	DestroyIcon((*piglunon)->hIcon);
+	MemFree (*piglunon);
+	*piglunon = NULL;
     }
 }
 
@@ -7130,7 +7130,7 @@ mswin_rev (int state)
 	}
 	else{
 	    gpTTYInfo->curAttrib.style &= ~CHAR_ATTR_REV;
-	    pico_set_normal_color();
+	    igluno_set_normal_color();
 	}
     }
 
@@ -8803,16 +8803,16 @@ mswin_multopenfile(char *dir_utf8, int nMaxDName, char *fName_utf8,
  */
 
 /*
- * pico_XXcolor() - each function sets a particular attribute
+ * igluno_XXcolor() - each function sets a particular attribute
  */
 void
-pico_nfcolor(char *s)
+igluno_nfcolor(char *s)
 {
     char cbuf[MAXCLEN];
 
     if(s){
 	SetColorAttribute (&gpTTYInfo->rgbFGColor, s);
-	pico_set_nfg_color();
+	igluno_set_nfg_color();
 
 	if(the_normal_color){
 	  strncpy(the_normal_color->fg,
@@ -8834,13 +8834,13 @@ pico_nfcolor(char *s)
 
 
 void
-pico_nbcolor(char *s)
+igluno_nbcolor(char *s)
 {
     char cbuf[MAXCLEN];
 
     if(s){
 	SetColorAttribute (&gpTTYInfo->rgbBGColor, s);
-	pico_set_nbg_color();
+	igluno_set_nbg_color();
 
 	if(the_normal_color){
 	  strncpy(the_normal_color->bg,
@@ -8862,7 +8862,7 @@ pico_nbcolor(char *s)
 
 
 void
-pico_rfcolor(char *s)
+igluno_rfcolor(char *s)
 {
     char cbuf[MAXCLEN];
 
@@ -8885,7 +8885,7 @@ pico_rfcolor(char *s)
 
 
 void
-pico_rbcolor(char *s)
+igluno_rbcolor(char *s)
 {
     char cbuf[MAXCLEN];
 
@@ -8908,14 +8908,14 @@ pico_rbcolor(char *s)
 
 
 int
-pico_usingcolor()
+igluno_usingcolor()
 {
     return(TRUE);
 }
 
 
 int
-pico_count_in_color_table()
+igluno_count_in_color_table()
 {
     return(visibleColorTableSize);
 }
@@ -8970,28 +8970,28 @@ color_to_asciirgb(char *colorName)
 
 
 void
-pico_set_nfg_color()
+igluno_set_nfg_color()
 {
     FlushWriteAccum ();
     gpTTYInfo->curAttrib.rgbFG = gpTTYInfo->rgbFGColor;
 }
 
 void
-pico_set_nbg_color()
+igluno_set_nbg_color()
 {
     FlushWriteAccum ();
     gpTTYInfo->curAttrib.rgbBG = gpTTYInfo->rgbBGColor;
 }
 
 void
-pico_set_normal_color()
+igluno_set_normal_color()
 {
-    pico_set_nfg_color();
-    pico_set_nbg_color();
+    igluno_set_nfg_color();
+    igluno_set_nbg_color();
 }
 
 COLOR_PAIR *
-pico_get_rev_color()
+igluno_get_rev_color()
 {
     char fgbuf[MAXCLEN], bgbuf[MAXCLEN];
 
@@ -9003,7 +9003,7 @@ pico_get_rev_color()
 }
 
 COLOR_PAIR *
-pico_get_normal_color()
+igluno_get_normal_color()
 {
     char fgbuf[MAXCLEN], bgbuf[MAXCLEN];
 
@@ -9024,17 +9024,17 @@ pico_get_normal_color()
  * color pair, otherwise returns NULL.
  */
 COLOR_PAIR *
-pico_set_colors(char *fg, char *bg, int flags)
+igluno_set_colors(char *fg, char *bg, int flags)
 {
     COLOR_PAIR *cp = NULL;
 
     if(flags & PSC_RET)
-      cp = pico_get_cur_color();
+      cp = igluno_get_cur_color();
 
-    if(!(fg && bg && pico_set_fg_color(fg) && pico_set_bg_color(bg))){
+    if(!(fg && bg && igluno_set_fg_color(fg) && igluno_set_bg_color(bg))){
 
 	if(flags & PSC_NORM)
-	  pico_set_normal_color();
+	  igluno_set_normal_color();
 	else if(flags & PSC_REV)
 	  SetReverseColor();
     }
@@ -9044,7 +9044,7 @@ pico_set_colors(char *fg, char *bg, int flags)
 
 
 int
-pico_is_good_color(char *colorName)
+igluno_is_good_color(char *colorName)
 {
     COLORREF	 cf;
 
@@ -9057,7 +9057,7 @@ pico_is_good_color(char *colorName)
 
 
 int
-pico_set_fg_color(char *colorName)
+igluno_set_fg_color(char *colorName)
 {
     char fgbuf[MAXCLEN];
 
@@ -9075,7 +9075,7 @@ pico_set_fg_color(char *colorName)
 
 
 int
-pico_set_bg_color(char *colorName)
+igluno_set_bg_color(char *colorName)
 {
     char bgbuf[MAXCLEN];
 
@@ -9093,34 +9093,34 @@ pico_set_bg_color(char *colorName)
 
 
 char *
-pico_get_last_fg_color()
+igluno_get_last_fg_color()
 {
     return(NULL);
 }
 
 
 char *
-pico_get_last_bg_color()
+igluno_get_last_bg_color()
 {
     return(NULL);
 }
 
 
 unsigned
-pico_get_color_options()
+igluno_get_color_options()
 {
     return((unsigned)0);
 }
 
 
 void
-pico_set_color_options(unsigned int opts)
+igluno_set_color_options(unsigned int opts)
 {
 }
 
 
 COLOR_PAIR *
-pico_get_cur_color()
+igluno_get_cur_color()
 {
     char fgbuf[MAXCLEN], bgbuf[MAXCLEN];
 
@@ -9764,7 +9764,7 @@ EditCopy (void)
     }
     else {
 	
-	/* Otherwise, it's a Pico/Pine copy. */
+	/* Otherwise, it's a igluno/Pine copy. */
 	if(gCopyCutFunction == (getc_t)kremove){
 	    kdelete();		/* Clear current kill buffer. */
 	    copyregion (1, 0);
@@ -12286,7 +12286,7 @@ ExplainSystemErr()
  *	   FALSE - was not able to do the scroll operation.
  */
 int
-pico_scroll_callback (int cmd, long scroll_pos)
+igluno_scroll_callback (int cmd, long scroll_pos)
 {
     switch (cmd) {
     case MSWIN_KEY_SCROLLUPLINE:

@@ -35,12 +35,12 @@ int
 P_open(char *s)
 {
 #if	HAVE_POPEN
-    extern FIOINFO g_pico_fio;
+    extern FIOINFO g_igluno_fio;
 
-    g_pico_fio.flags = FIOINFO_READ;
-    g_pico_fio.name = "pipe";
+    g_igluno_fio.flags = FIOINFO_READ;
+    g_igluno_fio.name = "pipe";
 
-    if((g_pico_fio.fp = popen(s, "r")) != NULL)
+    if((g_igluno_fio.fp = popen(s, "r")) != NULL)
       return(FIOSUC);
 
     return(FIOERR);
@@ -60,9 +60,9 @@ void
 P_close(void)
 {
 #if	HAVE_PCLOSE
-    extern FIOINFO g_pico_fio;
+    extern FIOINFO g_igluno_fio;
 
-    if(g_pico_fio.fp)
-      (void) pclose(g_pico_fio.fp);
+    if(g_igluno_fio.fp)
+      (void) pclose(g_igluno_fio.fp);
 #endif
 }

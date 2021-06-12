@@ -1,27 +1,27 @@
 ;
-; pico.def
-; Linker module definition file for pico editor interface
+; igluno.def
+; Linker module definition file for igluno editor interface
 ;
-LIBRARY PICOLIB INITINSTANCE
-DESCRIPTION 'UW pico editor interface'
+LIBRARY iglunoLIB INITINSTANCE
+DESCRIPTION 'UW igluno editor interface'
 DATA
   MULTIPLE NONSHARED
 EXPORTS
-  ; pico interface
-  pico
-  pico_get
-  pico_give
-  pico_seek
-  pico_new_mail
-  pico_nbcolor
-  pico_rbcolor
-  pico_nfcolor
-  pico_rfcolor
-  pico_puts
-  pico_readc
-  pico_writec
-  pico_fncomplete
-  pico_file_browse
+  ; igluno interface
+  igluno
+  igluno_get
+  igluno_give
+  igluno_seek
+  igluno_new_mail
+  igluno_nbcolor
+  igluno_rbcolor
+  igluno_nfcolor
+  igluno_rfcolor
+  igluno_puts
+  igluno_readc
+  igluno_writec
+  igluno_fncomplete
+  igluno_file_browse
   ; pc functions
   ibmgetc
   ibmbeep

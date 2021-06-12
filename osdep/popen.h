@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_POPEN_INCLUDED
-#define PICO_OSDEP_POPEN_INCLUDED
+#ifndef igluno_OSDEP_POPEN_INCLUDED
+#define igluno_OSDEP_POPEN_INCLUDED
 
 
 /* exported prototypes */
@@ -23,4 +23,4 @@ int	 P_open(char *);
 void	 P_close(void);
 
 
-#endif /* PICO_OSDEP_POPEN_INCLUDED */
+#endif /* igluno_OSDEP_POPEN_INCLUDED */

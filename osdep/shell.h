@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_SHELL_INCLUDED
-#define PICO_OSDEP_SHELL_INCLUDED
+#ifndef igluno_OSDEP_SHELL_INCLUDED
+#define igluno_OSDEP_SHELL_INCLUDED
 
 
 /* exported prototypes */
@@ -24,4 +24,4 @@ int	bktoshell(int, int);
 #endif
 
 
-#endif /* PICO_OSDEP_SHELL_INCLUDED */
+#endif /* igluno_OSDEP_SHELL_INCLUDED */

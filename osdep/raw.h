@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_RAW_INCLUDED
-#define PICO_OSDEP_RAW_INCLUDED
+#ifndef igluno_OSDEP_RAW_INCLUDED
+#define igluno_OSDEP_RAW_INCLUDED
 
 
 /* useful definitions */
@@ -35,4 +35,4 @@ void	crlf_proc(int);
 void	intr_proc(int);
 
 
-#endif /* PICO_OSDEP_RAW_INCLUDED */
+#endif /* igluno_OSDEP_RAW_INCLUDED */

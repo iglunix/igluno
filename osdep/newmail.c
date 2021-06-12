@@ -20,7 +20,7 @@ static char rcsid[] = "$Id: newmail.c 672 2007-08-15 23:07:18Z hubert@u.washingt
 
 #include "../estruct.h"
 #include "../mode.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../edef.h"
 #include "../efunc.h"
 #include "../keydefs.h"
@@ -33,11 +33,11 @@ static char rcsid[] = "$Id: newmail.c 672 2007-08-15 23:07:18Z hubert@u.washingt
 
 
 /*
- * pico_new_mail - just checks mtime and atime of mail file and notifies user 
+ * igluno_new_mail - just checks mtime and atime of mail file and notifies user 
  *	           if it's possible that they have new mail.
  */
 int
-pico_new_mail(void)
+igluno_new_mail(void)
 {
 #ifndef _WINDOWS
     int ret = 0;

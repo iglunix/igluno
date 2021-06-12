@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_READ_INCLUDED
-#define PICO_OSDEP_READ_INCLUDED
+#ifndef igluno_OSDEP_READ_INCLUDED
+#define igluno_OSDEP_READ_INCLUDED
 
 
 #include <general.h>
@@ -32,4 +32,4 @@ int set_time_of_last_input(void);
 time_t	time_of_last_input(void);
 
 
-#endif /* PICO_OSDEP_READ_INCLUDED */
+#endif /* igluno_OSDEP_READ_INCLUDED */

@@ -14,8 +14,8 @@
  */
 
 
-#ifndef PICO_OSDEP_MOUSE_INCLUDED
-#define PICO_OSDEP_MOUSE_INCLUDED
+#ifndef igluno_OSDEP_MOUSE_INCLUDED
+#define igluno_OSDEP_MOUSE_INCLUDED
 
 #ifdef	MOUSE
 
@@ -30,4 +30,4 @@ void  invert_label(int, MENUITEM *);
 
 #endif /* MOUSE */
 
-#endif /* PICO_OSDEP_MOUSE_INCLUDED */
+#endif /* igluno_OSDEP_MOUSE_INCLUDED */

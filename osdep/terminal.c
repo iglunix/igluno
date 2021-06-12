@@ -23,7 +23,7 @@ static char rcsid[] = "$Id: terminal.c 919 2008-01-29 23:21:10Z hubert@u.washing
 
 #include "../estruct.h"
 #include "../keydefs.h"
-#include "../pico.h"
+#include "../igluno.h"
 #include "../mode.h"
 
 #include "raw.h"
@@ -143,7 +143,7 @@ setup_dflt_esc_seq(void)
      * the function keys on pc's running telnet
      */
 
-    /*
+    /* 
      * UW-NDC/UCS vt10[02] application mode.
      */
     kpinsert("\033OP", F1, 1);
@@ -189,7 +189,7 @@ setup_dflt_esc_seq(void)
     kpinsert("\033[H", KEY_HOME, 1);
     kpinsert("\033[F", KEY_END, 1);
 
-    /*
+    /* 
      * gnome-terminal 2.6.0, don't know why it
      * changed from 2.2.1
      */
@@ -208,7 +208,7 @@ setup_dflt_esc_seq(void)
      *  keymappings or to tweak terminfo.
      */
 
-    /*
+    /* 
      * ANSI mode.
      */
     kpinsert("\033[=a", F1, 1);
@@ -303,7 +303,11 @@ tinfoterminalinfo(int termcap_wins)
 	   *_kf7, *_kf8, *_kf9, *_kf10, *_kf11, *_kf12;
     char   *ttnm;
 
-    /*if (Pmaster) {
+    if (Pmaster) {
+	/*
+	 *		setupterm() automatically retrieves the value
+	 *		of the TERM variable.
+	 */
 	int err;
 	ttnm = getenv("TERM");
 	if(!ttnm)
@@ -315,11 +319,15 @@ tinfoterminalinfo(int termcap_wins)
 	if (err != 1) return(err-2);
     }
     else {
+	/*
+	 *		setupterm() issues a message and exits, if the
+	 *		terminfo data base is gone or the term type is
+	 *		unknown, if arg2 is 0.
 	 */
 	setupterm ((char *) 0, 1, (int *) 0);
     }
 
-    /*_clearscreen	= tigetstr("clear");
+    _clearscreen	= tigetstr("clear");
     _moveto		= tigetstr("cup");
     _up			= tigetstr("cuu1");
     _down		= tigetstr("cud1");
@@ -380,26 +388,27 @@ tinfoterminalinfo(int termcap_wins)
     _bce		= tigetflag("bce");
 
     _tlines = tigetnum("lines");
-    if(_tlines == -1){*/
+    if(_tlines == -1){
 	char *er;
 	int   rr;
 
 	/* tigetnum failed, try $LINES */
-	/*er = getenv("LINES");
+	er = getenv("LINES");
 	if(er && (rr = atoi(er)) > 0)
 	  _tlines = rr;
-  }*/
+    }
 
-    /*_tcolumns = tigetnum("cols");*/
-    /*if(_tcolumns == -1){
+    _tcolumns = tigetnum("cols");
+    if(_tcolumns == -1){
 	char *ec;
 	int   cc;
 
+	/* tigetnum failed, try $COLUMNS */
 	ec = getenv("COLUMNS");
 	if(ec && (cc = atoi(ec)) > 0)
 	  _tcolumns = cc;
-  }*/
-
+    }
+    
     /*
      * Add default keypad sequences to the trie.
      * Since these come first, they will override any conflicting termcap
@@ -409,26 +418,26 @@ tinfoterminalinfo(int termcap_wins)
      * escape sequences that don't work, because they conflict with default
      * sequences defined here.
      */
-    /* if(!termcap_wins)
+    if(!termcap_wins)
       setup_dflt_esc_seq();
- */
+
     /*
      * add termcap/info escape sequences to the trie...
      */
 
-    /* if(_ku != NULL && _kd != NULL && _kl != NULL && _kr != NULL){
+    if(_ku != NULL && _kd != NULL && _kl != NULL && _kr != NULL){
 	kpinsert(_ku, KEY_UP, termcap_wins);
 	kpinsert(_kd, KEY_DOWN, termcap_wins);
 	kpinsert(_kl, KEY_LEFT, termcap_wins);
 	kpinsert(_kr, KEY_RIGHT, termcap_wins);
-}
+    }
 
     if(_kppu != NULL && _kppd != NULL){
 	kpinsert(_kppu, KEY_PGUP, termcap_wins);
 	kpinsert(_kppd, KEY_PGDN, termcap_wins);
-} */
+    }
 
-    /*kpinsert(_kphome, KEY_HOME, termcap_wins);
+    kpinsert(_kphome, KEY_HOME, termcap_wins);
     kpinsert(_kpend,  KEY_END, termcap_wins);
     kpinsert(_kpdel,  KEY_DEL, termcap_wins);
 
@@ -443,7 +452,7 @@ tinfoterminalinfo(int termcap_wins)
     kpinsert(_kf9,  F9, termcap_wins);
     kpinsert(_kf10, F10, termcap_wins);
     kpinsert(_kf11, F11, termcap_wins);
-    kpinsert(_kf12, F12, termcap_wins);*/
+    kpinsert(_kf12, F12, termcap_wins);
 
     /*
      * Add default keypad sequences to the trie.
@@ -454,14 +463,14 @@ tinfoterminalinfo(int termcap_wins)
      * This means that you'd better get all of your termcap/terminfo entries
      * correct if you define TERMCAP_WINS.
      */
-    /*if(termcap_wins)
+    if(termcap_wins)
       setup_dflt_esc_seq();
-*/
-    /*if(Pmaster)
+
+    if(Pmaster)
       return(0);
     else
-      return(TRUE);*/
-
+      return(TRUE);
+}
 
 static int
 tinfoopen(void)
@@ -474,7 +483,7 @@ tinfoopen(void)
      */
     if(ttisslow())
       term_capabilities |= TT_OPTIMIZE;
-
+    
     col = _tcolumns;
     row = _tlines;
     if(row >= 0)
@@ -505,16 +514,16 @@ tinfoopen(void)
       term_capabilities &= ~TT_SCROLLEXIST;
 
     if(_clearscreen == NULL || _moveto == NULL || _up == NULL){
-	/*if(Pmaster == NULL){
+	if(Pmaster == NULL){
 	    puts("Incomplete terminfo entry\n");
 	    exit(1);
-	}*/
+	}
     }
 
     ttopen();
 
-    /*if(_termcap_init && !Pmaster) {
-	putpad(_termcap_init);*/		/* any init terminfo requires */
+    if(_termcap_init && !Pmaster) {
+	putpad(_termcap_init);		/* any init terminfo requires */
 	if (_scrollregion)
 	  putpad(tgoto(_scrollregion, term.t_nrow, 0)) ;
     }
@@ -522,27 +531,27 @@ tinfoopen(void)
     /*
      * Initialize UW-modified NCSA telnet to use its functionkeys
      */
-    /* if((gmode & MDFKEY) && Pmaster == NULL)
-      puts("\033[99h"); */
+    if((gmode & MDFKEY) && Pmaster == NULL)
+      puts("\033[99h");
 
     /* return ignored */
-/*    return(0); */
-
+    return(0);
+}
 
 
 static int
 tinfoclose(void)
 {
-    /* if(!Pmaster){ */
-	/* if(gmode&MDFKEY)
-	  puts("\033[99l"); */
+    if(!Pmaster){
+	if(gmode&MDFKEY)
+	  puts("\033[99l");		/* reset UW-NCSA telnet keys */
 
-	/* if(_termcap_end
+	if(_termcap_end)		/* any clean up terminfo requires */
 	  putpad(_termcap_end);
-  } */
+    }
 
     ttclose();
-
+    
     /* return ignored */
     return(0);
 }
@@ -725,19 +734,19 @@ tinfoeeol(void)
      * If the terminal doesn't have back color erase, then we have to
      * erase manually to preserve the background color.
      */
-    if(pico_usingcolor() && (!_bce || !_cleartoeoln)){
+    if(igluno_usingcolor() && (!_bce || !_cleartoeoln)){
 	extern int ttcol, ttrow;
 
-	/* starting_col  = ttcol; */
-	/* starting_line = ttrow; */
-	last_bg_color = pico_get_last_bg_color();
-	pico_set_nbg_color();
-	/*for(c = ttcol; c < term.t_ncol; c++)
-	  ttputc(' ');*/
-
-        /*tinfomove(starting_line, starting_col);*/
+	starting_col  = ttcol;
+	starting_line = ttrow;
+	last_bg_color = igluno_get_last_bg_color();
+	igluno_set_nbg_color();
+	for(c = ttcol; c < term.t_ncol; c++)
+	  ttputc(' ');
+	
+        tinfomove(starting_line, starting_col);
 	if(last_bg_color){
-	    pico_set_bg_color(last_bg_color);
+	    igluno_set_bg_color(last_bg_color);
 	    free(last_bg_color);
 	}
     }
@@ -758,16 +767,16 @@ tinfoeeop(void)
      * If the terminal doesn't have back color erase, then we have to
      * erase manually to preserve the background color.
      */
-    if(pico_usingcolor() && (!_bce || !_cleartoeos)){
+    if(igluno_usingcolor() && (!_bce || !_cleartoeos)){
 	extern int ttcol, ttrow;
 
-	/*starting_col = ttcol;*/
-	/* starting_row = ttrow; */
+	starting_col = ttcol;
+	starting_row = ttrow;
 	tinfoeeol();				  /* rest of this line */
-	/* for(i = ttrow+1; i <= term.t_nrow; i++){
+	for(i = ttrow+1; i <= term.t_nrow; i++){  /* the remaining lines */
 	    tinfomove(i, 0);
 	    tinfoeeol();
-	}*/
+	}
 
 	tinfomove(starting_row, starting_col);
     }
@@ -834,7 +843,7 @@ extern char     *tgoto(char *, int, int);
  * This number used to be 315. No doubt there was a reason for that but we
  * don't know what it was. It's a bit of a hassle to make it dynamic, and most
  * modern systems seem to be using terminfo, so we'll just change it to 800.
- * We weren't stopping on overflow before, so we'll do that, too.
+ * We weren't stopping on overflow before, so we'll do that, too. 
  */
 #define TCAPSLEN 800
 char tcapbuf[TCAPSLEN];
@@ -891,7 +900,7 @@ setup_dflt_esc_seq(void)
      * the function keys on pc's running telnet
      */
 
-    /*
+    /* 
      * UW-NDC/UCS vt10[02] application mode.
      */
     kpinsert("\033OP", F1, 1);
@@ -937,7 +946,7 @@ setup_dflt_esc_seq(void)
     kpinsert("\033[H", KEY_HOME, 1);
     kpinsert("\033[F", KEY_END, 1);
 
-    /*
+    /* 
      * gnome-terminal 2.6.0, don't know why it
      * changed from 2.2.1
      */
@@ -956,7 +965,7 @@ setup_dflt_esc_seq(void)
      *  keymappings or to tweak terminfo.
      */
 
-    /*
+    /* 
      * ANSI mode.
      */
     kpinsert("\033[=a", F1, 1);
@@ -1299,7 +1308,7 @@ tcapopen(void)
      */
     if(gmode&MDFKEY && Pmaster == NULL)
       puts("\033[99h");
-
+    
     /* return ignored */
     return(0);
 }
@@ -1317,7 +1326,7 @@ tcapclose(void)
     }
 
     ttclose();
-
+    
     /* return ignored */
     return(0);
 }
@@ -1400,7 +1409,7 @@ o_scrolldown(int row, int n)
 	  putpad(_insertline);
 #endif
     }
-
+    
     /* return ignored */
     return(0);
 }
@@ -1501,19 +1510,19 @@ tcapeeol(void)
      * If the terminal doesn't have back color erase, then we have to
      * erase manually to preserve the background color.
      */
-    if(pico_usingcolor() && (!_bce || !_cleartoeoln)){
+    if(igluno_usingcolor() && (!_bce || !_cleartoeoln)){
 	extern int ttcol, ttrow;
 
 	starting_col  = ttcol;
 	starting_line = ttrow;
-	last_bg_color = pico_get_last_bg_color();
-	pico_set_nbg_color();
+	last_bg_color = igluno_get_last_bg_color();
+	igluno_set_nbg_color();
 	for(c = ttcol; c < term.t_ncol; c++)
 	  ttputc(' ');
-
+	
         tcapmove(starting_line, starting_col);
 	if(last_bg_color){
-	    pico_set_bg_color(last_bg_color);
+	    igluno_set_bg_color(last_bg_color);
 	    free(last_bg_color);
 	}
     }
@@ -1534,7 +1543,7 @@ tcapeeop(void)
      * If the terminal doesn't have back color erase, then we have to
      * erase manually to preserve the background color.
      */
-    if(pico_usingcolor() && (!_bce || !_cleartoeos)){
+    if(igluno_usingcolor() && (!_bce || !_cleartoeos)){
 	extern int ttcol, ttrow;
 
 	starting_col = ttcol;

@@ -14,7 +14,7 @@ static char rcsid[] = "$Id: browse.c 936 2008-02-26 23:07:15Z hubert@u.washingto
  *
  * ========================================================================
  *
- * Program:	Routines to support file browser in pico and Pine composer
+ * Program:	Routines to support file browser in igluno and Pine composer
  *
  *
  * NOTES:
@@ -22,11 +22,11 @@ static char rcsid[] = "$Id: browse.c 936 2008-02-26 23:07:15Z hubert@u.washingto
  *   Misc. thoughts (mss, 5 Apr 92)
  *
  *      This is supposed to be just a general purpose browser, equally
- *	callable from either pico or the pine composer.  Someday, it could
+ *	callable from either igluno or the pine composer.  Someday, it could
  * 	even be used to "wrap" the unix file business for really novice
  *      users.  The stubs are here for renaming, copying, creating directories,
  *      deleting, undeleting (thought is delete just moves files to
- *      ~/.pico.deleted directory or something and undelete offers the
+ *      ~/.igluno.deleted directory or something and undelete offers the
  *      files in there for undeletion: kind of like the mac trashcan).
  *
  *   Nice side effects
@@ -40,11 +40,11 @@ static char rcsid[] = "$Id: browse.c 936 2008-02-26 23:07:15Z hubert@u.washingto
  *
  */
 #include "headers.h"
-/* #include "../c-client/mail.h"
+#include "../c-client/mail.h"
 #include "../c-client/rfc822.h"
 #include "../pith/osdep/collate.h"
 #include "../pith/charconv/filesys.h"
-#include "../pith/conf.h" */
+#include "../pith/conf.h"
 
 #ifndef	_WINDOWS
 
@@ -120,7 +120,7 @@ static	KEYMENU menu_browse[] = {
 #define	EXEC_KEY	2
 #define	GOTO_KEY	6
 #define	SELECT_KEY	7
-#define	PICO_KEY	11
+#define	igluno_KEY	11
 
 
 #define DIRWORD "dir"
@@ -164,14 +164,14 @@ static UCS  bfmappings[2][12][2] = { { { F1,  '?'},	/* stand alone */
 
 
 /*
- * Browser help for pico (pine composer help handed to us by pine)
+ * Browser help for igluno (pine composer help handed to us by pine)
  */
 static char *BrowseHelpText[] = {
 /* TRANSLATORS: The next several lines go together. The ~ characters
    should be left in front of the characters they cause to be bold. */
 N_("Help for Browse Command"),
 "  ",
-N_("        Pico's file browser is used to select a file from the"),
+N_("        igluno's file browser is used to select a file from the"),
 N_("        file system for inclusion in the edited text."),
 "  ",
 N_("~        Both directories and files are displayed.  Press ~S"),
@@ -241,10 +241,10 @@ NULL
 
 
 /*
- * pico_file_browse - Exported version of FileBrowse below.
+ * igluno_file_browse - Exported version of FileBrowse below.
  */
 int
-pico_file_browse(PICO *pdata, char *dir, size_t dirlen, char *fn, size_t fnlen,
+igluno_file_browse(IGLUNO *pdata, char *dir, size_t dirlen, char *fn, size_t fnlen,
 		 char *sz, size_t szlen, int flags)
 {
     int  rv;
@@ -410,7 +410,7 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 		    mlerase();
 		    rv = (*Pmaster->showmsg)(c);
 		    ttresize();
-		    picosigs();
+		    iglunosigs();
 		    if(rv)	/* Did showmsg corrupt the display? */
 		      PaintBrowser(gmp, 0, &crow, &ccol); /* Yes, repaint */
 
@@ -430,7 +430,7 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 	}
 	else{
 	    if(get_input_timeout() && (c == NODATA || time_to_check()))
-	      if(pico_new_mail())
+	      if(igluno_new_mail())
 		emlwrite(_("You may possibly have new mail."), NULL);
 	}
 
@@ -702,7 +702,7 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 
 	  case 'e':					/* exit or edit */
 	  case 'E':
-	    if(gmode&MDBRONLY){				/* run "pico" */
+	    if(gmode&MDBRONLY){				/* run "igluno" */
 		snprintf(child, sizeof(child), "%s%c%s", gmp->dname, C_FILESEP,
 			gmp->current->fname);
 		/* make sure selected isn't a directory or executable */
@@ -714,13 +714,13 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 		if((envp = (char *) getenv("EDITOR")) != NULL)
 		  snprintf(tmp, sizeof(tmp), "%s \'%s\'", envp, child);
 		else
-		  snprintf(tmp, sizeof(tmp), "pico%s%s%s \'%s\'",
+		  snprintf(tmp, sizeof(tmp), "igluno%s%s%s \'%s\'",
 			  (gmode & MDFKEY) ? " -f" : "",
 			  (gmode & MDSHOCUR) ? " -g" : "",
 			  (gmode & MDMOUSE) ? " -m" : "",
 			  child);
 
-		BrowserRunChild(tmp, gmp->dname);	/* spawn pico */
+		BrowserRunChild(tmp, gmp->dname);	/* spawn igluno */
 		PaintBrowser(gmp, 0, &crow, &ccol);	/* redraw browser */
 	    }
 	    else{
@@ -789,7 +789,7 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 		break;
 	    }
 
-/* add subcommands to invoke pico and insert selected filename */
+/* add subcommands to invoke igluno and insert selected filename */
 /* perhaps: add subcmd to scroll command history */
 
 	    tmp[0] = '\0';
@@ -933,18 +933,18 @@ FileBrowse(char *dir, size_t dirlen, char *fn, size_t fnlen,
 	    if(Pmaster){
 		VARS_TO_SAVE *saved_state;
 
-		saved_state = save_pico_state();
+		saved_state = save_igluno_state();
 		(*Pmaster->helper)(Pmaster->browse_help,
 				   _("Help for Browsing"), 1);
 		if(saved_state){
-		    restore_pico_state(saved_state);
-		    free_pico_state(saved_state);
+		    restore_igluno_state(saved_state);
+		    free_igluno_state(saved_state);
 		}
 	    }
 	    else if(gmode&MDBRONLY)
-	      pico_help(sa_BrowseHelpText, _("Browser Help"), 1);
+	      igluno_help(sa_BrowseHelpText, _("Browser Help"), 1);
 	    else
-	      pico_help(BrowseHelpText, _("Help for Browsing"), 1);
+	      igluno_help(BrowseHelpText, _("Help for Browsing"), 1);
 	    /* fall thru to repaint everything */
 
 	  case (CTRL|'L'):
@@ -1832,7 +1832,7 @@ getfcells(char *dname, int fb_flags)
     /*
      * sort files case independently
      */
-    /* qsort((qsort_t *)filtnames, (size_t)nentries, sizeof(char *), sstrcasecmp); */
+    qsort((qsort_t *)filtnames, (size_t)nentries, sizeof(char *), sstrcasecmp);
 
     /*
      * this is so we use absolute path names for stats.
@@ -2195,14 +2195,14 @@ BrowserKeys(void)
 	menu_browse[EXEC_KEY].label = N_("Launch");
 	menu_browse[SELECT_KEY].name  = "V";
 	menu_browse[SELECT_KEY].label = "[" N_("View") "]";
-	menu_browse[PICO_KEY].name  = "E";
-	menu_browse[PICO_KEY].label = N_("Edit");
+	menu_browse[igluno_KEY].name  = "E";
+	menu_browse[igluno_KEY].label = N_("Edit");
     }
     else{
 	menu_browse[SELECT_KEY].name  = "S";
 	menu_browse[SELECT_KEY].label = "[" N_("Select") "]";
-	menu_browse[PICO_KEY].name  = "A";
-	menu_browse[PICO_KEY].label = N_("Add");
+	menu_browse[igluno_KEY].name  = "A";
+	menu_browse[igluno_KEY].label = N_("Add");
 
 	if(gmp && gmp->flags & FB_LMODEPOS){
 	    if(gmp && gmp->flags & FB_LMODE){	/* ListMode is already on */
@@ -2495,7 +2495,7 @@ BrowserAnchor(char *utf8dir)
     else if(Pmaster)
       snprintf(titlebuf, sizeof(buf), "  ALPINE %s", Pmaster->pine_version);
     else
-      snprintf(titlebuf, sizeof(buf), "  UW PICO %s", (gmode&MDBRONLY) ? "BROWSER" : version);
+      snprintf(titlebuf, sizeof(buf), "  UW igluno %s", (gmode&MDBRONLY) ? "BROWSER" : version);
 
     title_wid = utf8_width(titlebuf);
     t_to_b_wid = 15;
@@ -2589,9 +2589,9 @@ BrowserAnchor(char *utf8dir)
 
     movecursor(0, 0);
     if(Pmaster && Pmaster->colors && Pmaster->colors->tbcp
-       && pico_is_good_colorpair(Pmaster->colors->tbcp)){
-	lastc = pico_get_cur_color();
-	(void) pico_set_colorp(Pmaster->colors->tbcp, PSC_NONE);
+       && igluno_is_good_colorpair(Pmaster->colors->tbcp)){
+	lastc = igluno_get_cur_color();
+	(void) igluno_set_colorp(Pmaster->colors->tbcp, PSC_NONE);
     }
     else
       (*term.t_rev)(1);
@@ -2603,7 +2603,7 @@ BrowserAnchor(char *utf8dir)
     }
 
     if(lastc){
-	(void) pico_set_colorp(lastc, PSC_NONE);
+	(void) igluno_set_colorp(lastc, PSC_NONE);
 	free_color_pair(&lastc);
     }
     else
@@ -2697,10 +2697,10 @@ p_chdir(struct bmaster *mp)
 
 
 /*
- * pico_file_browse - Exported version of FileBrowse below.
+ * igluno_file_browse - Exported version of FileBrowse below.
  */
 int
-pico_file_browse(PICO *pdata, char *dir, size_t dirlen, char *fn, size_t fnlen,
+igluno_file_browse(igluno *pdata, char *dir, size_t dirlen, char *fn, size_t fnlen,
 		 char *sz, size_t szlen, int flags)
 {
     return(FileBrowse(dir, dirlen, fn, fnlen, sz, szlen, flags, NULL));

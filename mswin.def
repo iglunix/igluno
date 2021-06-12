@@ -1,6 +1,6 @@
-NAME         PICO
+NAME         igluno
 EXETYPE      WINDOWS
-DESCRIPTION  'Pico for Windows (Character)'
+DESCRIPTION  'igluno for Windows (Character)'
 STUB         'winstub.exe'
 
 CODE         PRELOAD DISCARDABLE SHARED
